@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#07110f">
+<title>How to Set Up a Secure Enterprise Network in Cisco Packet Tracer — Tanmay Sarkar Emon</title><meta name="description" content="A lab-focused walkthrough of topology planning, network segmentation and routing practice.">
+<meta property="og:title" content="How to Set Up a Secure Enterprise Network in Cisco Packet Tracer — Tanmay Sarkar Emon"><meta property="og:description" content="A lab-focused walkthrough of topology planning, network segmentation and routing practice."><meta property="og:type" content="article">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%2307110f'/%3E%3Ctext x='16' y='21' text-anchor='middle' font-family='monospace' font-size='14' font-weight='700' fill='%2377e0a4'%3ETS%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../blog.css"></head>
+<body>
+<header class="site-header">
+    <div class="wrap nav-shell">
+      <a class="brand" href="../index.html" aria-label="Tanmay Sarkar Emon, home"><span class="brand-mark" aria-hidden="true">TS</span><span>Tanmay Sarkar Emon</span></a>
+      <nav class="desktop-nav" aria-label="Main navigation">
+        <a href="../index.html#home">Home</a><a href="../index.html#about">About</a><a href="../index.html#services">Services</a><a href="../index.html#projects">Projects</a><a href="../index.html#skills">Skills</a><a href="../index.html#shop">Digital Shop</a><a href="../blog.html" aria-current="page" style="color:var(--green)">Blog</a>
+      </nav>
+      <a class="nav-contact" href="../index.html#contact">CONTACT ↗</a>
+      <button class="menu-button" id="menu-toggle" type="button" aria-label="Open navigation menu" aria-expanded="false" aria-controls="mobile-navigation"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg><span>Menu</span></button>
+    </div>
+    <nav class="mobile-nav wrap" id="mobile-navigation" aria-label="Mobile navigation" hidden>
+      <a href="../index.html#home">Home</a><a href="../index.html#about">About</a><a href="../index.html#services">Services</a><a href="../index.html#projects">Projects</a><a href="../index.html#skills">Skills</a><a href="../index.html#shop">Digital Shop</a><a href="../blog.html">Blog</a><a href="../index.html#contact">Contact</a>
+    </nav>
+  </header>
+<main><div class="article-wrap page-top">
+<nav class="crumbs" aria-label="Breadcrumb"><a href="../index.html">Home</a><span>/</span><a href="../blog.html">Blog</a><span>/</span><span>Guide</span></nav>
+<header class="article-head"><span class="blog-category">GUIDE / 01</span><h1>How to Set Up a Secure Enterprise Network in Cisco Packet Tracer</h1><p class="article-lead">A lab-focused walkthrough of topology planning, network segmentation and routing practice.</p><p class="article-meta" style="margin-top:14px">By Tanmay Sarkar Emon · 3 min read</p><img class="article-cover" src="../img/art-packet-tracer.webp" alt="How to Set Up a Secure Enterprise Network in Cisco Packet Tracer" width="1168" height="784"></header>
+<div class="article-body"><p>A secure network is planned before it is configured. In Packet Tracer you can practise the whole process: decide who needs to talk to whom, separate those groups, then lock down the devices that connect them.</p><div class="cta-inline"><span>Want every command on one page? <strong>Cisco Networking Guide</strong> · $14.99</span><a class="button button-primary" href="https://tanmayster357.gumroad.com/l/cisco-command-guide" target="_blank" rel="noopener noreferrer">View on Gumroad <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></a></div><h2>1. Plan the topology and addressing</h2><p>A small enterprise lab needs a router, two or three switches and a few PCs per department. Give every group its own VLAN and subnet:</p><pre><code>VLAN 10  Staff     192.168.10.0/24
+VLAN 20  Students  192.168.20.0/24
+VLAN 30  Servers   192.168.30.0/24
+VLAN 40  Guest     192.168.40.0/24</code></pre><h2>2. Segment with VLANs and router-on-a-stick</h2><p>Create the VLANs on the switches, put access ports in the right VLAN and trunk to the router. One sub-interface per VLAN acts as the gateway:</p><pre><code>Router(config)# interface g0/0.30
+Router(config-subif)# encapsulation dot1Q 30
+Router(config-subif)# ip address 192.168.30.1 255.255.255.0</code></pre><p>The full VLAN and trunk steps are in the VLAN article linked below.</p><div class="ad-slot" data-ad-position="middle"></div><h2>3. Control traffic between segments with an ACL</h2><p>By default the router lets every VLAN reach every other VLAN. Guests should never reach the servers, so block that traffic and allow the rest:</p><pre><code>Router(config)# ip access-list extended GUEST-IN
+Router(config-ext-nacl)# deny ip 192.168.40.0 0.0.0.255 192.168.30.0 0.0.0.255
+Router(config-ext-nacl)# permit ip any any
+Router(config)# interface g0/0.40
+Router(config-subif)# ip access-group GUEST-IN in</code></pre><h2>4. Harden the switches</h2><pre><code>Switch(config)# interface fa0/1
+Switch(config-if)# switchport port-security
+Switch(config-if)# switchport port-security maximum 2
+Switch(config-if)# switchport port-security mac-address sticky
+Switch(config-if)# switchport port-security violation restrict
+
+Switch(config)# interface range fa0/10-24
+Switch(config-if-range)# shutdown</code></pre><p>Port security limits how many devices can use a port, and shutting down unused ports stops someone plugging into them.</p><h2>5. Secure device management</h2><p>Replace Telnet with SSH and protect the privileged mode password:</p><pre><code>Router(config)# hostname R1
+R1(config)# ip domain-name lab.local
+R1(config)# crypto key generate rsa modulus 2048
+R1(config)# ip ssh version 2
+R1(config)# username admin secret StrongPass123
+R1(config)# enable secret AnotherStrongPass
+R1(config)# service password-encryption
+R1(config)# line vty 0 4
+R1(config-line)# transport input ssh
+R1(config-line)# login local</code></pre><h2>6. Test it</h2><ul><li>A staff PC can reach the server.</li><li>A guest PC can reach the internet side but not 192.168.30.0/24.</li><li>Telnet to the router fails and SSH works.</li><li>A second device plugged into a secured port is blocked or logged.</li></ul><p class="note">Use a stronger password than the examples here. Save the Packet Tracer file after each stage so you can go back if a change breaks connectivity.</p></div>
+<aside class="cta-card" aria-label="Related guide"><img src="../img/guide-cisco.webp" alt="Cisco Networking Guide cover" width="300" height="200"><div><span class="price">$14.99 · AVAILABLE ON GUMROAD</span><h2>Cisco Networking Guide</h2><p>VLAN, OSPF, HSRP and EtherChannel commands in one page.</p><a class="button button-primary" href="https://tanmayster357.gumroad.com/l/cisco-command-guide" target="_blank" rel="noopener noreferrer">Buy on Gumroad <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></a></div></aside>
+<div class="ad-slot" data-ad-position="bottom"></div>
+</div>
+<section class="related"><div class="wrap"><h2>More articles</h2><div class="blog-grid"><a class="blog-card" href="vlans-cisco-commands.html" aria-label="VLANs Explained with Cisco Commands"><div class="blog-art has-image is-wide" style="aspect-ratio:1400/764"><img src="../img/art-vlans-cisco-commands.webp" alt="" loading="lazy" width="700" height="382"></div><div class="blog-content"><span class="blog-category">GUIDE / 05</span><h3>VLANs Explained with Cisco Commands</h3><p class="body-copy">Create VLANs, assign access ports, set up a trunk and verify it, step by step.</p><span class="blog-foot">Read article <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></span></div></a>
+<a class="blog-card" href="ospf-single-area-packet-tracer.html" aria-label="OSPF Single-Area Configuration in Packet Tracer"><div class="blog-art has-image is-wide" style="aspect-ratio:1400/764"><img src="../img/art-ospf-single-area-packet-tracer.webp" alt="" loading="lazy" width="700" height="382"></div><div class="blog-content"><span class="blog-category">GUIDE / 06</span><h3>OSPF Single-Area Configuration in Packet Tracer</h3><p class="body-copy">Configure OSPF, silence the LAN side, and verify neighbours and routes.</p><span class="blog-foot">Read article <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></span></div></a>
+<a class="blog-card" href="hsrp-etherchannel-redundancy.html" aria-label="HSRP and EtherChannel: Redundancy Basics"><div class="blog-art has-image is-wide" style="aspect-ratio:1400/764"><img src="../img/art-hsrp-etherchannel-redundancy.webp" alt="" loading="lazy" width="700" height="382"></div><div class="blog-content"><span class="blog-category">GUIDE / 08</span><h3>HSRP and EtherChannel: Redundancy Basics</h3><p class="body-copy">A backup gateway and bundled links, so one failure does not take the network down.</p><span class="blog-foot">Read article <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></span></div></a></div><div class="blog-more"><a class="button button-quiet" href="../blog.html">All articles <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></a></div></div></section></main>
+<footer class="site-footer"><div class="wrap">
+      <div class="footer-grid">
+        <div><p class="footer-brand">Tanmay Sarkar Emon</p><p class="footer-copy">Cybersecurity · Networks · Web</p></div>
+        <div><h2 class="footer-heading">Based in</h2><p class="footer-copy">Asia Pacific University<br>Kuala Lumpur, Malaysia<br>Mon–Sat, 10:00–22:00 MYT</p></div>
+        <div><h2 class="footer-heading">Explore</h2><div class="footer-links"><a href="../index.html#about">About</a><a href="../index.html#projects">Projects</a><a href="../blog.html">Blog</a><a href="../index.html#shop">Digital Shop</a></div></div>
+        <div><h2 class="footer-heading">Site</h2><div class="footer-links"><a href="../about.html">About</a><a href="../contact.html">Contact</a><a href="../privacy.html">Privacy Policy</a><a href="../disclaimer.html">Disclaimer</a></div></div>
+        <div><h2 class="footer-heading">Get in touch</h2><div class="footer-links"><a href="mailto:tanmayskr1802@gmail.com">tanmayskr1802@gmail.com</a><a href="https://wa.me/8801612038913" target="_blank" rel="noopener noreferrer">WhatsApp</a></div></div>
+      </div>
+      <div class="footer-bottom"><span>© 2026 Tanmay Sarkar Emon. All Rights Reserved.</span>
+        <div class="footer-social"><a href="https://github.com/tanmay1802-art" target="_blank" rel="noopener noreferrer">GitHub ↗</a><a href="https://tanmayster357.gumroad.com" target="_blank" rel="noopener noreferrer">Gumroad ↗</a><a href="https://wa.me/8801612038913" target="_blank" rel="noopener noreferrer">WhatsApp ↗</a></div></div>
+    </div></footer>
+<script>(function(){var b=document.getElementById("menu-toggle"),m=document.getElementById("mobile-navigation");if(!b||!m)return;b.addEventListener("click",function(){var o=m.hasAttribute("hidden");if(o)m.removeAttribute("hidden");else m.setAttribute("hidden","");b.setAttribute("aria-expanded",String(o));});})();</script>
+<script src="../ads.js" defer></script>
+</body></html>

@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#07110f">
+<title>Reverse Engineering Basics on Linux — Tanmay Sarkar Emon</title><meta name="description" content="Read a compiled program with file, strings, objdump, ltrace and gdb, using your own practice file.">
+<meta property="og:title" content="Reverse Engineering Basics on Linux — Tanmay Sarkar Emon"><meta property="og:description" content="Read a compiled program with file, strings, objdump, ltrace and gdb, using your own practice file."><meta property="og:type" content="article">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%2307110f'/%3E%3Ctext x='16' y='21' text-anchor='middle' font-family='monospace' font-size='14' font-weight='700' fill='%2377e0a4'%3ETS%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../blog.css"></head>
+<body>
+<header class="site-header">
+    <div class="wrap nav-shell">
+      <a class="brand" href="../index.html" aria-label="Tanmay Sarkar Emon, home"><span class="brand-mark" aria-hidden="true">TS</span><span>Tanmay Sarkar Emon</span></a>
+      <nav class="desktop-nav" aria-label="Main navigation">
+        <a href="../index.html#home">Home</a><a href="../index.html#about">About</a><a href="../index.html#services">Services</a><a href="../index.html#projects">Projects</a><a href="../index.html#skills">Skills</a><a href="../index.html#shop">Digital Shop</a><a href="../blog.html" aria-current="page" style="color:var(--green)">Blog</a>
+      </nav>
+      <a class="nav-contact" href="../index.html#contact">CONTACT ↗</a>
+      <button class="menu-button" id="menu-toggle" type="button" aria-label="Open navigation menu" aria-expanded="false" aria-controls="mobile-navigation"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg><span>Menu</span></button>
+    </div>
+    <nav class="mobile-nav wrap" id="mobile-navigation" aria-label="Mobile navigation" hidden>
+      <a href="../index.html#home">Home</a><a href="../index.html#about">About</a><a href="../index.html#services">Services</a><a href="../index.html#projects">Projects</a><a href="../index.html#skills">Skills</a><a href="../index.html#shop">Digital Shop</a><a href="../blog.html">Blog</a><a href="../index.html#contact">Contact</a>
+    </nav>
+  </header>
+<main><div class="article-wrap page-top">
+<nav class="crumbs" aria-label="Breadcrumb"><a href="../index.html">Home</a><span>/</span><a href="../blog.html">Blog</a><span>/</span><span>Guide</span></nav>
+<header class="article-head"><span class="blog-category">GUIDE / 21</span><h1>Reverse Engineering Basics on Linux</h1><p class="article-lead">Read a compiled program with file, strings, objdump, ltrace and gdb, using your own practice file.</p><p class="article-meta" style="margin-top:14px">By Tanmay Sarkar Emon · 5 min read</p><img class="article-cover" src="../img/art-reverse-engineering-basics-linux.webp" alt="Reverse Engineering Basics on Linux" width="1400" height="764"></header>
+<div class="article-body"><p class="note">For learning only. Practise on programs you wrote or on CTF challenges that invite you to analyse them. Do not remove licence checks from software you do not own.</p><p>Reverse engineering means working out how a program behaves when you only have the compiled file and not the source code. Malware analysts, CTF players and defenders all use it.</p><h2>1. Make a practice program</h2><pre><code>#include &lt;stdio.h&gt;
+#include &lt;string.h&gt;
+int main(void){
+  char in[64];
+  printf(&quot;Password: &quot;);
+  scanf(&quot;%63s&quot;, in);
+  puts(strcmp(in, &quot;labpass&quot;) ? &quot;Denied&quot; : &quot;Access granted&quot;);
+  return 0;
+}</code></pre><pre><code>gcc -o practice practice.c</code></pre><div class="ad-slot" data-ad-position="middle"></div><h2>2. Static analysis</h2><pre><code>file practice
+readelf -h practice
+strings practice | head -30
+objdump -d -M intel practice | less</code></pre><p>strings already shows the text compiled into the file. This is why developers should never hard-code secrets in a program.</p><h2>3. Dynamic analysis</h2><pre><code>ltrace ./practice
+gdb ./practice</code></pre><p>ltrace shows library calls such as strcmp. Inside gdb you can use these commands:</p><pre><code>break main
+run
+disassemble main
+info registers</code></pre><h2>4. A decompiler</h2><p>Ghidra is a free tool that turns machine code into readable C-like code. Open your practice file, find main and rename the variables as you understand them.</p><h2>5. Skills to build</h2><p>Learn the basics of assembly (registers, cmp, jmp, call), then try the Reverse category of beginner CTFs and write notes on every challenge you solve.</p><p class="note">Always analyse unknown or suspicious files inside an isolated virtual machine.</p><div class="cta-inline"><span>Want the investigation steps on one page? <strong>DFIR Forensic Investigation Cheatsheet</strong> · $11.99</span><a class="button button-primary" href="https://tanmayster357.gumroad.com/l/dfir-forensic-investigation-cheatsheet" target="_blank" rel="noopener noreferrer">View on Gumroad <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></a></div></div>
+<aside class="cta-card" aria-label="Related guide"><img src="../img/guide-dfir.webp" alt="DFIR Forensic Investigation Cheatsheet cover" width="300" height="200"><div><span class="price">$11.99 · AVAILABLE ON GUMROAD</span><h2>DFIR Forensic Investigation Cheatsheet</h2><p>Incident response and digital forensics cheat sheet: live system analysis and investigation steps.</p><a class="button button-primary" href="https://tanmayster357.gumroad.com/l/dfir-forensic-investigation-cheatsheet" target="_blank" rel="noopener noreferrer">Buy on Gumroad <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></a></div></aside>
+<div class="ad-slot" data-ad-position="bottom"></div>
+</div>
+<section class="related"><div class="wrap"><h2>More articles</h2><div class="blog-grid"><a class="blog-card" href="linux-server-hardening-fail2ban.html" aria-label="Beginner’s Guide to Linux Server Hardening &amp; Fail2ban"><div class="blog-art has-image"><img src="../img/art-linux.webp" alt="Beginner’s Guide to Linux Server Hardening &amp; Fail2ban" loading="lazy" width="640" height="430"></div><div class="blog-content"><span class="blog-category">GUIDE / 02</span><h3 class="sr-only">Beginner’s Guide to Linux Server Hardening &amp; Fail2ban</h3><span class="blog-foot">Read article <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></span></div></a>
+<a class="blog-card" href="nmap-basics-lab-network.html" aria-label="Nmap Basics: Scanning Your Own Lab Network"><div class="blog-art has-image is-wide" style="aspect-ratio:1400/764"><img src="../img/art-nmap-basics-lab-network.webp" alt="" loading="lazy" width="700" height="382"></div><div class="blog-content"><span class="blog-category">GUIDE / 04</span><h3>Nmap Basics: Scanning Your Own Lab Network</h3><p class="body-copy">Host discovery, port scans and service detection, with the commands I use in my own labs.</p><span class="blog-foot">Read article <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></span></div></a>
+<a class="blog-card" href="plan-semester-labs-projects.html" aria-label="How I Plan a Semester of Labs and Projects"><div class="blog-art has-image is-wide" style="aspect-ratio:1400/764"><img src="../img/art-plan-semester-labs-projects.webp" alt="" loading="lazy" width="700" height="382"></div><div class="blog-content"><span class="blog-category">GUIDE / 09</span><h3>How I Plan a Semester of Labs and Projects</h3><p class="body-copy">A simple weekly system for tracking labs, deadlines and project checklists.</p><span class="blog-foot">Read article <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></span></div></a></div><div class="blog-more"><a class="button button-quiet" href="../blog.html">All articles <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></a></div></div></section></main>
+<footer class="site-footer"><div class="wrap">
+      <div class="footer-grid">
+        <div><p class="footer-brand">Tanmay Sarkar Emon</p><p class="footer-copy">Cybersecurity · Networks · Web</p></div>
+        <div><h2 class="footer-heading">Based in</h2><p class="footer-copy">Asia Pacific University<br>Kuala Lumpur, Malaysia<br>Mon–Sat, 10:00–22:00 MYT</p></div>
+        <div><h2 class="footer-heading">Explore</h2><div class="footer-links"><a href="../index.html#about">About</a><a href="../index.html#projects">Projects</a><a href="../blog.html">Blog</a><a href="../index.html#shop">Digital Shop</a></div></div>
+        <div><h2 class="footer-heading">Site</h2><div class="footer-links"><a href="../about.html">About</a><a href="../contact.html">Contact</a><a href="../privacy.html">Privacy Policy</a><a href="../disclaimer.html">Disclaimer</a></div></div>
+        <div><h2 class="footer-heading">Get in touch</h2><div class="footer-links"><a href="mailto:tanmayskr1802@gmail.com">tanmayskr1802@gmail.com</a><a href="https://wa.me/8801612038913" target="_blank" rel="noopener noreferrer">WhatsApp</a></div></div>
+      </div>
+      <div class="footer-bottom"><span>© 2026 Tanmay Sarkar Emon. All Rights Reserved.</span>
+        <div class="footer-social"><a href="https://github.com/tanmay1802-art" target="_blank" rel="noopener noreferrer">GitHub ↗</a><a href="https://tanmayster357.gumroad.com" target="_blank" rel="noopener noreferrer">Gumroad ↗</a><a href="https://wa.me/8801612038913" target="_blank" rel="noopener noreferrer">WhatsApp ↗</a></div></div>
+    </div></footer>
+<script>(function(){var b=document.getElementById("menu-toggle"),m=document.getElementById("mobile-navigation");if(!b||!m)return;b.addEventListener("click",function(){var o=m.hasAttribute("hidden");if(o)m.removeAttribute("hidden");else m.setAttribute("hidden","");b.setAttribute("aria-expanded",String(o));});})();</script>
+<script src="../ads.js" defer></script>
+</body></html>
