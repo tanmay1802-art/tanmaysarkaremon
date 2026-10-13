@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#07110f">
+<title>Apache Virtual Hosts with a Self-Signed SSL Certificate and HTTP Redirect — Tanmay Sarkar Emon</title>
+<link rel="canonical" href="https://tanmaysarkaremon.pages.dev/blog/apache-virtual-hosts-self-signed-ssl.html"><meta name="description" content="Two websites on one Apache server, HTTPS with a self-signed certificate, and why Firefox still said Not Secure after curl said it was fine.">
+<meta property="og:title" content="Apache Virtual Hosts with a Self-Signed SSL Certificate and HTTP Redirect"><meta property="og:description" content="Two websites on one Apache server, HTTPS with a self-signed certificate, and why Firefox still said Not Secure after curl said it was fine."><meta property="og:type" content="article"><meta property="og:url" content="https://tanmaysarkaremon.pages.dev/blog/apache-virtual-hosts-self-signed-ssl.html"><meta property="og:site_name" content="Tanmay Sarkar Emon"><meta property="og:image" content="https://tanmaysarkaremon.pages.dev/img/og/apache-virtual-hosts-self-signed-ssl.jpg"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="Apache Virtual Hosts with a Self-Signed SSL Certificate and HTTP Redirect"><meta name="twitter:description" content="Two websites on one Apache server, HTTPS with a self-signed certificate, and why Firefox still said Not Secure after curl said it was fine."><meta name="twitter:image" content="https://tanmaysarkaremon.pages.dev/img/og/apache-virtual-hosts-self-signed-ssl.jpg">
+<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "BlogPosting", "headline": "Apache Virtual Hosts with a Self-Signed SSL Certificate and HTTP Redirect", "description": "Two websites on one Apache server, HTTPS with a self-signed certificate, and why Firefox still said Not Secure after curl said it was fine.", "image": "https://tanmaysarkaremon.pages.dev/img/og/apache-virtual-hosts-self-signed-ssl.jpg", "datePublished": "2026-10-13", "dateModified": "2026-10-13", "author": {"@type": "Person", "name": "Tanmay Sarkar Emon", "url": "https://tanmaysarkaremon.pages.dev/about.html"}, "publisher": {"@type": "Person", "name": "Tanmay Sarkar Emon", "url": "https://tanmaysarkaremon.pages.dev/about.html"}, "mainEntityOfPage": "https://tanmaysarkaremon.pages.dev/blog/apache-virtual-hosts-self-signed-ssl.html", "inLanguage": "en"}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://tanmaysarkaremon.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Blog", "item": "https://tanmaysarkaremon.pages.dev/blog.html"}, {"@type": "ListItem", "position": 3, "name": "Apache Virtual Hosts with a Self-Signed SSL Certificate and HTTP Redirect", "item": "https://tanmaysarkaremon.pages.dev/blog/apache-virtual-hosts-self-signed-ssl.html"}]}]}</script>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%2307110f'/%3E%3Ctext x='16' y='21' text-anchor='middle' font-family='monospace' font-size='14' font-weight='700' fill='%2377e0a4'%3ETS%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../blog.css"></head>
+<body>
+<header class="site-header">
+    <div class="wrap nav-shell">
+      <a class="brand" href="../index.html" aria-label="Tanmay Sarkar Emon, home"><span class="brand-mark" aria-hidden="true">TS</span><span>Tanmay Sarkar Emon</span></a>
+      <nav class="desktop-nav" aria-label="Main navigation">
+        <a href="../index.html#home">Home</a><a href="../index.html#about">About</a><a href="../index.html#services">Services</a><a href="../index.html#projects">Projects</a><a href="../index.html#skills">Skills</a><a href="../index.html#shop">Digital Shop</a><a href="../blog.html" aria-current="page" style="color:var(--green)">Blog</a>
+      </nav>
+      <a class="nav-contact" href="../index.html#contact">CONTACT ↗</a>
+      <button class="menu-button" id="menu-toggle" type="button" aria-label="Open navigation menu" aria-expanded="false" aria-controls="mobile-navigation"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg><span>Menu</span></button>
+    </div>
+    <nav class="mobile-nav wrap" id="mobile-navigation" aria-label="Mobile navigation" hidden>
+      <a href="../index.html#home">Home</a><a href="../index.html#about">About</a><a href="../index.html#services">Services</a><a href="../index.html#projects">Projects</a><a href="../index.html#skills">Skills</a><a href="../index.html#shop">Digital Shop</a><a href="../blog.html">Blog</a><a href="../index.html#contact">Contact</a>
+    </nav>
+  </header>
+<main><div class="article-wrap page-top">
+<nav class="crumbs" aria-label="Breadcrumb"><a href="../index.html">Home</a><span>/</span><a href="../blog.html">Blog</a><span>/</span><span>Guide</span></nav>
+<header class="article-head"><span class="blog-category">GUIDE / 25</span><h1>Apache Virtual Hosts with a Self-Signed SSL Certificate and HTTP Redirect</h1><p class="article-lead">Two websites on one Apache server, HTTPS with a self-signed certificate, and why Firefox still said Not Secure after curl said it was fine.</p><p class="article-meta" style="margin-top:14px">By Tanmay Sarkar Emon · <time datetime="2026-10-13">Published 13 Oct 2026</time> · Updated <time datetime="2026-10-13">13 Oct 2026</time> · 3 min read</p><img class="article-cover" src="../img/art-linux-users-groups-sudo.webp" alt="Apache Virtual Hosts with a Self-Signed SSL Certificate and HTTP Redirect" width="1400" height="764"></header>
+<div class="article-body">
+<p>The web server chapter of my SNA assignment asked for two sites on one Rocky Linux machine, both over HTTPS, with plain HTTP redirected. The Apache part is routine. The more interesting problem was trust: why <code>curl</code> and Firefox disagreed about the same certificate. This article walks through the build and ends with that puzzle, because it is a good lesson about how certificate stores work.</p>
+<h2>Install and open the firewall</h2>
+<p>I installed <code>httpd</code> and <code>mod_ssl</code>, enabled and started the service, and allowed HTTP and HTTPS through firewalld.</p>
+<pre><code>sudo dnf install -y httpd mod_ssl
+sudo systemctl enable --now httpd
+sudo firewall-cmd --permanent --add-service=http --add-service=https
+sudo firewall-cmd --reload</code></pre>
+<h2>Two sites, two folders</h2>
+<p>Name-based virtual hosting means one IP address and one server, but Apache chooses a site by the hostname in the request. I created a folder for each and gave the pages different colours and headings so I could never confuse them during testing: a dark blue "Welcome to bungkus.org" page and a green "Intranet Portal" page.</p>
+<pre><code>sudo mkdir -p /var/www/maliserver.bungkus.org
+sudo mkdir -p /var/www/intranet.bungkus.org</code></pre>
+<p>When I ran these commands a stray "bash: 3: command not found" appeared first. I had pasted a list number from my notes into the terminal. It is harmless, but it is a good reminder to read what you paste.</p>
+<h2>Giving the intranet site a DNS name</h2>
+<p>The main server name already resolved. For the second site I added one line to the forward zone, <code>intranet IN A 192.168.200.4</code>, raised the serial, validated with <code>named-checkzone</code>, restarted named, and confirmed with <code>dig intranet.bungkus.org</code>. Both names point at the same IP, which is exactly how name-based virtual hosts work. (The zone itself is covered in my <a href="bind9-dns-server-rocky-linux.html">BIND9 article</a>.)</p>
+<h2>A self-signed certificate in one command</h2>
+<pre><code>sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
+  -keyout /etc/pki/tls/private/apache-selfsigned.key \
+  -out /etc/pki/tls/certs/apache-selfsigned.crt \
+  -subj &quot;/C=MY/ST=NegeriSembilan/L=Seremban/O=bungkus/CN=maliserver.bungkus.org&quot;</code></pre>
+<p>I checked the result with <code>ls -la</code>: the certificate was mode 644 and the private key 600. The key should never be readable by other users. One caveat: this certificate only names maliserver.bungkus.org, and I reused it for the intranet host. That is fine for a lab. For real use you would issue a certificate that lists every hostname (a SAN certificate) or use a wildcard.</p>
+<div class="ad-slot" data-ad-position="middle"></div>
+<h2>The virtual host file</h2>
+<p>I put everything in <code>/etc/httpd/conf.d/vhosts.conf</code>. The port 80 block does one thing, a permanent redirect to HTTPS, and two port 443 blocks serve the two sites from their own folders.</p>
+<pre><code>&lt;VirtualHost *:80&gt;
+    ServerName maliserver.bungkus.org
+    Redirect permanent / https://maliserver.bungkus.org/
+&lt;/VirtualHost&gt;
+
+&lt;VirtualHost *:443&gt;
+    ServerName maliserver.bungkus.org
+    DocumentRoot /var/www/maliserver.bungkus.org
+    SSLEngine on
+    SSLCertificateFile /etc/pki/tls/certs/apache-selfsigned.crt
+    SSLCertificateKeyFile /etc/pki/tls/private/apache-selfsigned.key
+&lt;/VirtualHost&gt;
+
+&lt;VirtualHost *:443&gt;
+    ServerName intranet.bungkus.org
+    DocumentRoot /var/www/intranet.bungkus.org
+    SSLEngine on
+    SSLCertificateFile /etc/pki/tls/certs/apache-selfsigned.crt
+    SSLCertificateKeyFile /etc/pki/tls/private/apache-selfsigned.key
+&lt;/VirtualHost&gt;</code></pre>
+<p>Always run <code>sudo apachectl configtest</code> before restarting. It tells you about a bad path or a typo without taking the site down.</p>
+<h2>Trusting the certificate on the client</h2>
+<p>A self-signed certificate is not trusted by anyone by default. I copied it to the Ubuntu client with scp, placed it in <code>/usr/local/share/ca-certificates/</code> and ran <code>sudo update-ca-certificates</code>, which reported one certificate added.</p>
+<h2>The puzzle: curl is happy, Firefox is not</h2>
+<p>With the certificate trusted, <code>curl https://intranet.bungkus.org</code> returned the intranet page with no certificate warnings.</p>
+<figure class="lab-shot"><img src="../img/lab-apache-curl-intranet.webp" alt="curl output returning the intranet HTML page over HTTPS" width="814" height="457" loading="lazy"><figcaption>curl over HTTPS, with no certificate errors.</figcaption></figure>
+<p>But Firefox still showed "Not Secure" on the same URLs.</p>
+<figure class="lab-shot"><img src="../img/lab-apache-firefox-not-secure.webp" alt="Firefox showing Not Secure for maliserver.bungkus.org" width="938" height="605" loading="lazy"><figcaption>The page is served correctly, but Firefox does not trust the certificate.</figcaption></figure>
+<p>The server was not at fault. <code>update-ca-certificates</code> only updates the system-wide store that tools like curl read. Firefox keeps its own separate certificate database and ignores the system one. To fix it, import the certificate in Firefox's own certificate manager, or use a certificate from a CA the browser already trusts, such as one from Let's Encrypt on a real domain.</p>
+<h2>Self-signed or real certificate?</h2>
+<p>A self-signed certificate gives you the same encryption as any other certificate, but nobody can verify who issued it, which is why every client has to be told to trust it by hand. That is fine for a lab and for internal tools. For anything public, use a certificate from a real CA. Let's Encrypt issues free ones, but it needs a real domain name that points at your server, which a private lab domain like bungkus.org cannot provide.</p>
+<h2>Quick troubleshooting list</h2>
+<ul>
+<li>Wrong site appears: check each <code>ServerName</code> and that DNS points the name at the server.</li>
+<li>Apache will not start: run <code>apachectl configtest</code> and read the line number it gives you.</li>
+<li>Browser warning but curl works: it is a trust store difference, not a server fault.</li>
+<li>Cannot connect at all: check firewalld for both http and https.</li>
+</ul>
+<div class="cta-inline"><span>Want every command on one page? <strong>Linux &amp; Enterprise Configuration Guide</strong> · $9.99</span><a class="button button-primary" href="https://tanmayster357.gumroad.com/l/linux-server-guide" target="_blank" rel="noopener noreferrer">View on Gumroad <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></a></div></div>
+<aside class="cta-card" aria-label="Related guide"><img src="../img/guide-linux.webp" alt="Linux &amp; Enterprise Configuration Guide cover" width="300" height="200"><div><span class="price">$9.99 · AVAILABLE ON GUMROAD</span><h2>Linux &amp; Enterprise Configuration Guide</h2><p>PDF cheat sheet: BIND9, Apache, Fail2ban and hardening basics.</p><a class="button button-primary" href="https://tanmayster357.gumroad.com/l/linux-server-guide" target="_blank" rel="noopener noreferrer">Buy on Gumroad <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></a></div></aside>
+<div class="ad-slot" data-ad-position="bottom"></div>
+</div>
+<section class="related"><div class="wrap"><h2>More articles</h2><div class="blog-grid"><a class="blog-card" href="bind9-dns-server-rocky-linux.html" aria-label="Setting Up a BIND9 DNS Server on Rocky Linux (Forward and Reverse Zones)"><div class="blog-art has-image is-wide" style="aspect-ratio:1400/764"><img src="../img/art-linux.webp" alt="" loading="lazy" width="700" height="382"></div><div class="blog-content"><span class="blog-category">GUIDE / 23</span><h3>Setting Up a BIND9 DNS Server on Rocky Linux (Forward and Reverse Zones)</h3><p class="body-copy">A lab walkthrough of BIND9 on Rocky Linux with forward and reverse zones, including the reverse zone file that refused to load.</p><span class="blog-foot">Read article <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></span></div></a>
+<a class="blog-card" href="postfix-dovecot-mail-server-troubleshooting.html" aria-label="Postfix and Dovecot Mail Server: 7 Problems I Hit and How I Fixed Them"><div class="blog-art has-image is-wide" style="aspect-ratio:1400/764"><img src="../img/art-linux-log-reading-journalctl-auth-log.webp" alt="" loading="lazy" width="700" height="382"></div><div class="blog-content"><span class="blog-category">GUIDE / 24</span><h3>Postfix and Dovecot Mail Server: 7 Problems I Hit and How I Fixed Them</h3><p class="body-copy">Setting up Postfix and Dovecot on Rocky Linux was easy. Getting Thunderbird to send mail was not. Here are the real errors and fixes.</p><span class="blog-foot">Read article <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></span></div></a>
+<a class="blog-card" href="ssh-hardening-checklist.html" aria-label="SSH Hardening Checklist for a New Linux Server"><div class="blog-art has-image is-wide" style="aspect-ratio:1400/764"><img src="../img/art-ssh-hardening-checklist.webp" alt="" loading="lazy" width="700" height="382"></div><div class="blog-content"><span class="blog-category">GUIDE / 07</span><h3>SSH Hardening Checklist for a New Linux Server</h3><p class="body-copy">Key login, no root access, firewall and Fail2ban in a short checklist.</p><span class="blog-foot">Read article <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></span></div></a>
+</div><div class="blog-more"><a class="button button-quiet" href="../blog.html">All articles <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></a></div></div></section></main>
+<footer class="site-footer"><div class="wrap">
+      <div class="footer-grid">
+        <div><p class="footer-brand">Tanmay Sarkar Emon</p><p class="footer-copy">Cybersecurity · Networks · Web</p></div>
+        <div><h2 class="footer-heading">Based in</h2><p class="footer-copy">Asia Pacific University<br>Kuala Lumpur, Malaysia<br>Mon–Sat, 10:00–22:00 MYT</p></div>
+        <div><h2 class="footer-heading">Explore</h2><div class="footer-links"><a href="../index.html#about">About</a><a href="../index.html#projects">Projects</a><a href="../blog.html">Blog</a><a href="../index.html#shop">Digital Shop</a></div></div>
+        <div><h2 class="footer-heading">Site</h2><div class="footer-links"><a href="../about.html">About</a><a href="../contact.html">Contact</a><a href="../privacy.html">Privacy Policy</a><a href="../disclaimer.html">Disclaimer</a></div></div>
+        <div><h2 class="footer-heading">Get in touch</h2><div class="footer-links"><a href="mailto:tanmayskr1802@gmail.com">tanmayskr1802@gmail.com</a><a href="https://wa.me/8801612038913" target="_blank" rel="noopener noreferrer">WhatsApp</a></div></div>
+      </div>
+      <div class="footer-bottom"><span>© 2026 Tanmay Sarkar Emon. All Rights Reserved.</span>
+        <div class="footer-social"><a href="https://github.com/tanmay1802-art" target="_blank" rel="noopener noreferrer">GitHub ↗</a><a href="https://tanmayster357.gumroad.com" target="_blank" rel="noopener noreferrer">Gumroad ↗</a><a href="https://wa.me/8801612038913" target="_blank" rel="noopener noreferrer">WhatsApp ↗</a></div></div>
+    </div></footer>
+<script>(function(){var b=document.getElementById("menu-toggle"),m=document.getElementById("mobile-navigation");if(!b||!m)return;b.addEventListener("click",function(){var o=m.hasAttribute("hidden");if(o)m.removeAttribute("hidden");else m.setAttribute("hidden","");b.setAttribute("aria-expanded",String(o));});})();</script>
+<script src="../ads.js" defer></script>
+</body></html>

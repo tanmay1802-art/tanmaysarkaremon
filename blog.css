@@ -145,3 +145,13 @@ button { font: inherit; }
 
 .footer-grid{grid-template-columns:1.2fr .9fr .8fr .8fr 1fr}
 @media(max-width:1000px){.footer-grid{grid-template-columns:1fr 1fr}}
+
+/* lab screenshots, inline code, tables inside articles */
+.article-body figure.lab-shot{margin:24px 0 26px}
+.article-body figure.lab-shot img{display:block;max-width:100%;height:auto;border:1px solid var(--line);border-radius:6px;background:#08130f}
+.article-body figcaption{margin-top:8px;color:#86998d;font-size:.82rem;line-height:1.6}
+.article-body code{font-family:var(--mono);font-size:.86em;color:var(--green);background:rgba(119,224,164,.08);padding:1px 5px;border-radius:3px}
+.article-body pre code{background:none;padding:0;font-size:inherit}
+.article-body a{color:var(--green);text-decoration:underline;text-underline-offset:3px}
+.article-body li{margin-bottom:6px}
+.article-meta time{white-space:nowrap}

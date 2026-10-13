@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#07110f">
+<title>NAT Overload and a Floating Default Route for Backup Internet in Packet Tracer — Tanmay Sarkar Emon</title>
+<link rel="canonical" href="https://tanmaysarkaremon.pages.dev/blog/cisco-nat-floating-default-route.html"><meta name="description" content="Primary and backup internet exits with PAT and a floating static route, built and tested in Packet Tracer, plus the mistakes I made.">
+<meta property="og:title" content="NAT Overload and a Floating Default Route for Backup Internet in Packet Tracer"><meta property="og:description" content="Primary and backup internet exits with PAT and a floating static route, built and tested in Packet Tracer, plus the mistakes I made."><meta property="og:type" content="article"><meta property="og:url" content="https://tanmaysarkaremon.pages.dev/blog/cisco-nat-floating-default-route.html"><meta property="og:site_name" content="Tanmay Sarkar Emon"><meta property="og:image" content="https://tanmaysarkaremon.pages.dev/img/og/cisco-nat-floating-default-route.jpg"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="NAT Overload and a Floating Default Route for Backup Internet in Packet Tracer"><meta name="twitter:description" content="Primary and backup internet exits with PAT and a floating static route, built and tested in Packet Tracer, plus the mistakes I made."><meta name="twitter:image" content="https://tanmaysarkaremon.pages.dev/img/og/cisco-nat-floating-default-route.jpg">
+<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "BlogPosting", "headline": "NAT Overload and a Floating Default Route for Backup Internet in Packet Tracer", "description": "Primary and backup internet exits with PAT and a floating static route, built and tested in Packet Tracer, plus the mistakes I made.", "image": "https://tanmaysarkaremon.pages.dev/img/og/cisco-nat-floating-default-route.jpg", "datePublished": "2026-10-13", "dateModified": "2026-10-13", "author": {"@type": "Person", "name": "Tanmay Sarkar Emon", "url": "https://tanmaysarkaremon.pages.dev/about.html"}, "publisher": {"@type": "Person", "name": "Tanmay Sarkar Emon", "url": "https://tanmaysarkaremon.pages.dev/about.html"}, "mainEntityOfPage": "https://tanmaysarkaremon.pages.dev/blog/cisco-nat-floating-default-route.html", "inLanguage": "en"}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://tanmaysarkaremon.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Blog", "item": "https://tanmaysarkaremon.pages.dev/blog.html"}, {"@type": "ListItem", "position": 3, "name": "NAT Overload and a Floating Default Route for Backup Internet in Packet Tracer", "item": "https://tanmaysarkaremon.pages.dev/blog/cisco-nat-floating-default-route.html"}]}]}</script>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%2307110f'/%3E%3Ctext x='16' y='21' text-anchor='middle' font-family='monospace' font-size='14' font-weight='700' fill='%2377e0a4'%3ETS%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../blog.css"></head>
+<body>
+<header class="site-header">
+    <div class="wrap nav-shell">
+      <a class="brand" href="../index.html" aria-label="Tanmay Sarkar Emon, home"><span class="brand-mark" aria-hidden="true">TS</span><span>Tanmay Sarkar Emon</span></a>
+      <nav class="desktop-nav" aria-label="Main navigation">
+        <a href="../index.html#home">Home</a><a href="../index.html#about">About</a><a href="../index.html#services">Services</a><a href="../index.html#projects">Projects</a><a href="../index.html#skills">Skills</a><a href="../index.html#shop">Digital Shop</a><a href="../blog.html" aria-current="page" style="color:var(--green)">Blog</a>
+      </nav>
+      <a class="nav-contact" href="../index.html#contact">CONTACT ↗</a>
+      <button class="menu-button" id="menu-toggle" type="button" aria-label="Open navigation menu" aria-expanded="false" aria-controls="mobile-navigation"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg><span>Menu</span></button>
+    </div>
+    <nav class="mobile-nav wrap" id="mobile-navigation" aria-label="Mobile navigation" hidden>
+      <a href="../index.html#home">Home</a><a href="../index.html#about">About</a><a href="../index.html#services">Services</a><a href="../index.html#projects">Projects</a><a href="../index.html#skills">Skills</a><a href="../index.html#shop">Digital Shop</a><a href="../blog.html">Blog</a><a href="../index.html#contact">Contact</a>
+    </nav>
+  </header>
+<main><div class="article-wrap page-top">
+<nav class="crumbs" aria-label="Breadcrumb"><a href="../index.html">Home</a><span>/</span><a href="../blog.html">Blog</a><span>/</span><span>Guide</span></nav>
+<header class="article-head"><span class="blog-category">GUIDE / 26</span><h1>NAT Overload and a Floating Default Route for Backup Internet in Packet Tracer</h1><p class="article-lead">Primary and backup internet exits with PAT and a floating static route, built and tested in Packet Tracer, plus the mistakes I made.</p><p class="article-meta" style="margin-top:14px">By Tanmay Sarkar Emon · <time datetime="2026-10-13">Published 13 Oct 2026</time> · Updated <time datetime="2026-10-13">13 Oct 2026</time> · 3 min read</p><img class="article-cover" src="../img/art-ospf-single-area-packet-tracer.webp" alt="NAT Overload and a Floating Default Route for Backup Internet in Packet Tracer" width="1400" height="764"></header>
+<div class="article-body">
+<p>Internal networks use private addresses, which cannot be routed on the internet. The router at the edge has to translate them, and ideally there should be a second exit if the first one fails. In my assignment's headquarters I built exactly that: one primary router doing NAT overload (PAT), and a second router acting as a backup using a floating static route. This article covers both and the test results, including the ones that were not perfect.</p>
+<h2>The design</h2>
+<p>Two routers at the HQ each had a link to the ISP. Router A was the primary exit. Router B was the backup. Both connected to the core switches over their own /30 links and ran OSPF with them. The ISP router had a loopback address, 9.9.9.9, which I used as a stand-in for "the internet" to ping.</p>
+<h2>PAT on the primary router</h2>
+<p>NAT overload lets many private hosts share one public address by using different port numbers. You need four things: an access list for which addresses may be translated, an inside and outside marking on the interfaces, the translation rule itself, and a default route.</p>
+<pre><code>access-list 1 permit 192.168.0.0 0.0.255.255
+!
+interface serial0/1/0
+ ip nat outside
+interface gigabitEthernet0/0/1
+ ip nat inside
+!
+ip nat inside source list 1 interface serial0/1/0 overload
+ip route 0.0.0.0 0.0.0.0 203.0.113.42
+router ospf 1
+ default-information originate</code></pre><figure class="lab-shot"><img src="../img/lab-nat-floating-config.webp" alt="KLROUTER_A configuration with access-list, ip nat outside, an invalid input error, then the overload command" width="860" height="491" loading="lazy"><figcaption>My configuration session on the primary router, including the line IOS rejected.</figcaption></figure>
+<p>You can see in the screenshot that one of my first <code>ip nat inside source</code> attempts was rejected with "Invalid input detected". I had left off the interface name. Once I wrote it as <code>interface Serial0/1/0 overload</code>, it was accepted. The last line, <code>default-information originate</code>, advertises the default route into OSPF so that every other router sends internet traffic here.</p>
+<div class="ad-slot" data-ad-position="middle"></div>
+<h2>The backup: a floating static route</h2>
+<p>A floating static route is an ordinary static route with a deliberately high administrative distance. Static routes normally have a distance of 1, and OSPF routes have 110. If I give the backup default route a distance of 250, the router ignores it as long as the OSPF default route from the primary router exists. When that disappears, the static route "floats" up and starts being used.</p>
+<pre><code>ip route 0.0.0.0 0.0.0.0 203.0.113.46 250</code></pre>
+<p>The backup router also had NAT overload configured on its own ISP link, otherwise the traffic would leave with private source addresses and never come back.</p>
+<h2>Return routes on the ISP side</h2>
+<p>Packets also have to find their way back. The ISP router needed routes for my public block, 203.0.113.0/24, one towards the primary router and a backup one with a higher distance of 250 towards the second router. Without them the pings went out but no replies returned, which looks exactly like a NAT problem even though it is not.</p>
+<h2>Test results</h2>
+<ul>
+<li>Primary router to 9.9.9.9: 5 out of 5 replies.</li>
+<li>Backup router to its ISP link: 5 out of 5.</li>
+<li>Backup router to 9.9.9.9: 3 out of 5. The first packets were lost while the link and ARP were settling.</li>
+<li>A PC in the HQ pinging 9.9.9.9 through NAT: 3 out of 4, with the first request timing out for ARP.</li>
+</ul>
+<p>First-ping loss is normal in Packet Tracer, so I do not count it as a failure, but I also did not hide it. The ping TTL of 253 on the PC test shows the packet crossed several routers on its way.</p>
+<h2>Serial cable pitfalls</h2>
+<p>On the serial links to the ISP, the <code>clock rate</code> command is accepted only on the DCE end of the cable. When IOS refused it on one side, the answer was to apply it on the other router, not to fight the command. If your link stays down, check which end is DCE first.</p>
+<h2>Checklist</h2>
+<ul>
+<li>Inside and outside marked on the right interfaces?</li>
+<li>Does the access list match the real private range you use?</li>
+<li>Does <code>show ip nat translations</code> show entries when you ping?</li>
+<li>Does the ISP side have a return route?</li>
+<li>Is the floating route's distance higher than the dynamic route you want it to back up?</li>
+</ul>
+<p>The routing protocol that spreads the default route is explained in my <a href="ospf-single-area-packet-tracer.html">OSPF single-area article</a>.</p>
+<div class="cta-inline"><span>Want every command on one page? <strong>Cisco Networking Guide</strong> · $14.99</span><a class="button button-primary" href="https://tanmayster357.gumroad.com/l/cisco-command-guide" target="_blank" rel="noopener noreferrer">View on Gumroad <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></a></div></div>
+<aside class="cta-card" aria-label="Related guide"><img src="../img/guide-cisco.webp" alt="Cisco Networking Guide cover" width="300" height="200"><div><span class="price">$14.99 · AVAILABLE ON GUMROAD</span><h2>Cisco Networking Guide</h2><p>VLAN, OSPF, HSRP and EtherChannel commands in one page.</p><a class="button button-primary" href="https://tanmayster357.gumroad.com/l/cisco-command-guide" target="_blank" rel="noopener noreferrer">Buy on Gumroad <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></a></div></aside>
+<div class="ad-slot" data-ad-position="bottom"></div>
+</div>
+<section class="related"><div class="wrap"><h2>More articles</h2><div class="blog-grid"><a class="blog-card" href="ospf-single-area-packet-tracer.html" aria-label="OSPF Single-Area Configuration in Packet Tracer"><div class="blog-art has-image is-wide" style="aspect-ratio:1400/764"><img src="../img/art-ospf-single-area-packet-tracer.webp" alt="" loading="lazy" width="700" height="382"></div><div class="blog-content"><span class="blog-category">GUIDE / 06</span><h3>OSPF Single-Area Configuration in Packet Tracer</h3><p class="body-copy">Using OSPF area 0 to connect a headquarters and three branches in Packet Tracer, with the verification commands and the link errors I fixed.</p><span class="blog-foot">Read article <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></span></div></a>
+<a class="blog-card" href="hsrp-etherchannel-redundancy.html" aria-label="HSRP and EtherChannel: Redundancy Basics"><div class="blog-art has-image is-wide" style="aspect-ratio:1400/764"><img src="../img/art-hsrp-etherchannel-redundancy.webp" alt="" loading="lazy" width="700" height="382"></div><div class="blog-content"><span class="blog-category">GUIDE / 08</span><h3>HSRP and EtherChannel: Redundancy Basics</h3><p class="body-copy">How I used LACP EtherChannel and HSRP version 2 to remove single points of failure in a four-site Packet Tracer network.</p><span class="blog-foot">Read article <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></span></div></a>
+<a class="blog-card" href="cisco-acl-basics.html" aria-label="Cisco ACL Basics: Standard and Extended"><div class="blog-art has-image is-wide" style="aspect-ratio:1400/764"><img src="../img/art-cisco-acl-basics.webp" alt="" loading="lazy" width="700" height="382"></div><div class="blog-content"><span class="blog-category">GUIDE / 15</span><h3>Cisco ACL Basics: Standard and Extended</h3><p class="body-copy">Permit or deny traffic on a router, with rules you can read and test.</p><span class="blog-foot">Read article <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></span></div></a>
+</div><div class="blog-more"><a class="button button-quiet" href="../blog.html">All articles <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></a></div></div></section></main>
+<footer class="site-footer"><div class="wrap">
+      <div class="footer-grid">
+        <div><p class="footer-brand">Tanmay Sarkar Emon</p><p class="footer-copy">Cybersecurity · Networks · Web</p></div>
+        <div><h2 class="footer-heading">Based in</h2><p class="footer-copy">Asia Pacific University<br>Kuala Lumpur, Malaysia<br>Mon–Sat, 10:00–22:00 MYT</p></div>
+        <div><h2 class="footer-heading">Explore</h2><div class="footer-links"><a href="../index.html#about">About</a><a href="../index.html#projects">Projects</a><a href="../blog.html">Blog</a><a href="../index.html#shop">Digital Shop</a></div></div>
+        <div><h2 class="footer-heading">Site</h2><div class="footer-links"><a href="../about.html">About</a><a href="../contact.html">Contact</a><a href="../privacy.html">Privacy Policy</a><a href="../disclaimer.html">Disclaimer</a></div></div>
+        <div><h2 class="footer-heading">Get in touch</h2><div class="footer-links"><a href="mailto:tanmayskr1802@gmail.com">tanmayskr1802@gmail.com</a><a href="https://wa.me/8801612038913" target="_blank" rel="noopener noreferrer">WhatsApp</a></div></div>
+      </div>
+      <div class="footer-bottom"><span>© 2026 Tanmay Sarkar Emon. All Rights Reserved.</span>
+        <div class="footer-social"><a href="https://github.com/tanmay1802-art" target="_blank" rel="noopener noreferrer">GitHub ↗</a><a href="https://tanmayster357.gumroad.com" target="_blank" rel="noopener noreferrer">Gumroad ↗</a><a href="https://wa.me/8801612038913" target="_blank" rel="noopener noreferrer">WhatsApp ↗</a></div></div>
+    </div></footer>
+<script>(function(){var b=document.getElementById("menu-toggle"),m=document.getElementById("mobile-navigation");if(!b||!m)return;b.addEventListener("click",function(){var o=m.hasAttribute("hidden");if(o)m.removeAttribute("hidden");else m.setAttribute("hidden","");b.setAttribute("aria-expanded",String(o));});})();</script>
+<script src="../ads.js" defer></script>
+</body></html>

@@ -1,8 +1,9 @@
 <!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#07110f">
 <title>VLANs Explained with Cisco Commands — Tanmay Sarkar Emon</title>
-<link rel="canonical" href="https://tanmaysarkaremon.pages.dev/blog/vlans-cisco-commands.html"><meta name="description" content="Create VLANs, assign access ports, set up a trunk and verify it, step by step.">
-<meta property="og:title" content="VLANs Explained with Cisco Commands — Tanmay Sarkar Emon"><meta property="og:description" content="Create VLANs, assign access ports, set up a trunk and verify it, step by step."><meta property="og:type" content="article">
+<link rel="canonical" href="https://tanmaysarkaremon.pages.dev/blog/vlans-cisco-commands.html"><meta name="description" content="How I split a four-site Packet Tracer network into VLANs, with the access, trunk and native VLAN commands and the mistakes I made.">
+<meta property="og:title" content="VLANs Explained with Cisco Commands"><meta property="og:description" content="How I split a four-site Packet Tracer network into VLANs, with the access, trunk and native VLAN commands and the mistakes I made."><meta property="og:type" content="article"><meta property="og:url" content="https://tanmaysarkaremon.pages.dev/blog/vlans-cisco-commands.html"><meta property="og:site_name" content="Tanmay Sarkar Emon"><meta property="og:image" content="https://tanmaysarkaremon.pages.dev/img/og/vlans-cisco-commands.jpg"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="VLANs Explained with Cisco Commands"><meta name="twitter:description" content="How I split a four-site Packet Tracer network into VLANs, with the access, trunk and native VLAN commands and the mistakes I made."><meta name="twitter:image" content="https://tanmaysarkaremon.pages.dev/img/og/vlans-cisco-commands.jpg">
+<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "BlogPosting", "headline": "VLANs Explained with Cisco Commands", "description": "How I split a four-site Packet Tracer network into VLANs, with the access, trunk and native VLAN commands and the mistakes I made.", "image": "https://tanmaysarkaremon.pages.dev/img/og/vlans-cisco-commands.jpg", "datePublished": "2026-10-12", "dateModified": "2026-10-13", "author": {"@type": "Person", "name": "Tanmay Sarkar Emon", "url": "https://tanmaysarkaremon.pages.dev/about.html"}, "publisher": {"@type": "Person", "name": "Tanmay Sarkar Emon", "url": "https://tanmaysarkaremon.pages.dev/about.html"}, "mainEntityOfPage": "https://tanmaysarkaremon.pages.dev/blog/vlans-cisco-commands.html", "inLanguage": "en"}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://tanmaysarkaremon.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Blog", "item": "https://tanmaysarkaremon.pages.dev/blog.html"}, {"@type": "ListItem", "position": 3, "name": "VLANs Explained with Cisco Commands", "item": "https://tanmaysarkaremon.pages.dev/blog/vlans-cisco-commands.html"}]}]}</script>
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%2307110f'/%3E%3Ctext x='16' y='21' text-anchor='middle' font-family='monospace' font-size='14' font-weight='700' fill='%2377e0a4'%3ETS%3C/text%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -23,24 +24,66 @@
   </header>
 <main><div class="article-wrap page-top">
 <nav class="crumbs" aria-label="Breadcrumb"><a href="../index.html">Home</a><span>/</span><a href="../blog.html">Blog</a><span>/</span><span>Guide</span></nav>
-<header class="article-head"><span class="blog-category">GUIDE / 05</span><h1>VLANs Explained with Cisco Commands</h1><p class="article-lead">Create VLANs, assign access ports, set up a trunk and verify it, step by step.</p><p class="article-meta" style="margin-top:14px">By Tanmay Sarkar Emon · 3 min read</p><img class="article-cover" src="../img/art-vlans-cisco-commands.webp" alt="VLANs Explained with Cisco Commands" width="1400" height="764"></header>
-<div class="article-body"><p>A VLAN splits one physical switch into separate logical networks. Students, staff and servers can share the same hardware but stay in different broadcast domains, which is better for both performance and security.</p><div class="cta-inline"><span>Want every command on one page? <strong>Cisco Networking Guide</strong> · $14.99</span><a class="button button-primary" href="https://tanmayster357.gumroad.com/l/cisco-command-guide" target="_blank" rel="noopener noreferrer">View on Gumroad <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></a></div><h2>1. Create the VLANs</h2><pre><code>Switch(config)# vlan 10
-Switch(config-vlan)# name STUDENTS
-Switch(config-vlan)# vlan 20
-Switch(config-vlan)# name STAFF</code></pre><h2>2. Put access ports into a VLAN</h2><pre><code>Switch(config)# interface fa0/1
-Switch(config-if)# switchport mode access
-Switch(config-if)# switchport access vlan 10</code></pre><div class="ad-slot" data-ad-position="middle"></div><h2>3. Build a trunk between switches</h2><pre><code>Switch(config)# interface gi0/1
-Switch(config-if)# switchport mode trunk
-Switch(config-if)# switchport trunk allowed vlan 10,20</code></pre><p>On some switch models you must first run switchport trunk encapsulation dot1q. If the command is rejected, your switch only supports 802.1Q and does not need it.</p><h2>4. Let VLANs talk to each other</h2><p>Different VLANs need a router. The simplest lab method is router-on-a-stick: one trunk link to the router, with a sub-interface per VLAN.</p><pre><code>Router(config)# interface g0/0.10
-Router(config-subif)# encapsulation dot1Q 10
-Router(config-subif)# ip address 192.168.10.1 255.255.255.0</code></pre><p>Remember to run no shutdown on the physical interface g0/0.</p><h2>5. Verify</h2><pre><code>show vlan brief
-show interfaces trunk</code></pre><p class="note">If two hosts in the same VLAN cannot ping, check the access port VLAN first. If hosts in different VLANs cannot ping, check the trunk and the sub-interface gateway.</p></div>
+<header class="article-head"><span class="blog-category">GUIDE / 05</span><h1>VLANs Explained with Cisco Commands</h1><p class="article-lead">How I split a four-site Packet Tracer network into VLANs, with the access, trunk and native VLAN commands and the mistakes I made.</p><p class="article-meta" style="margin-top:14px">By Tanmay Sarkar Emon · <time datetime="2026-10-12">Published 12 Oct 2026</time> · Updated <time datetime="2026-10-13">13 Oct 2026</time> · 3 min read</p><img class="article-cover" src="../img/art-vlans-cisco-commands.webp" alt="VLANs Explained with Cisco Commands" width="1400" height="764"></header>
+<div class="article-body">
+<p>A VLAN splits one physical switch into several separate Layer 2 networks. In my networking assignment I had to design a company network across four sites: a Kuala Lumpur HQ plus Malacca, Johor Bahru and Penang. At HQ the departments each got their own VLAN. This article shows the exact pattern I used on the KL access switches, in Cisco Packet Tracer, and the small errors that cost me time.</p>
+<h2>The VLAN plan</h2>
+<p>Before touching a switch I fixed the numbers, because VLAN IDs end up in every other configuration:</p>
+<ul>
+<li>VLAN 10: Management</li>
+<li>VLAN 20: Human Resources</li>
+<li>VLAN 30: Design</li>
+<li>VLAN 110: Voice, shared by the HR and Design switches for IP phones</li>
+<li>VLAN 999: an unused VLAN used only as the native VLAN on trunks</li>
+</ul>
+<p>Each VLAN also got its own subnet through VLSM, so the Management VLAN is a small /28 while the Design VLAN, with the most devices, got a /25. The VLAN number and the subnet number should be easy to relate. I used 10, 20 and 30 for the third octet of the address, which made troubleshooting much easier.</p>
+<h2>Creating VLANs and access ports</h2>
+<p>On each access switch you create the VLAN, name it, and assign the ports that plug into PCs.</p>
+<pre><code>vlan 20
+ name HR
+vlan 110
+ name VOICE
+vlan 999
+ name UNUSED-NATIVE
+!
+interface range fa0/5 - 13
+ switchport mode access
+ switchport access vlan 20</code></pre>
+<p>The IP phone port is a special case. It carries the PC's data in VLAN 20 and the phone's traffic in VLAN 110, so it gets <code>switchport voice vlan 110</code> in addition to the access VLAN.</p>
+<div class="ad-slot" data-ad-position="middle"></div>
+<h2>Trunks to the core</h2>
+<p>The uplinks to the core switches carry every VLAN, so they are 802.1Q trunks. I changed the native VLAN from the default VLAN 1 to 999, which nothing else uses. That reduces the risk of VLAN hopping through untagged traffic.</p>
+<pre><code>interface range fa0/1 - 2
+ switchport mode trunk
+ switchport trunk native vlan 999
+ switchport nonegotiate</code></pre>
+<h2>Verifying with two commands</h2>
+<p>I rely on <code>show vlan brief</code> and <code>show interfaces trunk</code>. The first tells you which ports belong to which VLAN, the second tells you which ports are trunking, with what encapsulation and native VLAN. Here is the HR switch after configuration: VLAN 20 holds the access ports, VLAN 110 holds the phone port, and the three uplinks show as 802.1Q trunks with native VLAN 999.</p>
+<figure class="lab-shot"><img src="../img/lab-vlan-hr-switch-verify.webp" alt="show vlan brief and show interfaces trunk output on the KL Human Resource switch" width="928" height="657" loading="lazy"><figcaption>HR switch: VLAN 20 and 110 active, trunks on Fa0/1, Fa0/2 and Fa0/4 using native VLAN 999.</figcaption></figure>
+<h2>A management address so you can SSH in</h2>
+<p>A Layer 2 switch has no IP address by default. I gave the Management VLAN interface an address, and pointed the switch's default gateway at the HSRP virtual IP, so it stays reachable if one core switch fails (more on that in my <a href="hsrp-etherchannel-redundancy.html">HSRP and EtherChannel article</a>).</p>
+<pre><code>interface vlan 10
+ ip address 192.168.10.14 255.255.255.240
+ no shutdown
+exit
+ip default-gateway 192.168.10.1</code></pre>
+<h2>Mistakes I made</h2>
+<ul>
+<li><strong>Typing a wrong subnet mask.</strong> My first attempt at the management address was cut off partway through the mask, and IOS answered with "% Invalid input detected at the '^' marker." The caret points at the exact spot where the command went wrong, so read where it points before retyping.</li>
+<li><strong>"% Incomplete command" on ip default-gateway.</strong> I forgot to put the address after the command. IOS is telling you something is missing, not that something is wrong.</li>
+<li><strong>Native VLAN mismatch warnings.</strong> While I configured one end of a trunk with native VLAN 999 and the other was still on VLAN 1, the switches printed CDP-4-NATIVE_VLAN_MISMATCH messages. They disappear once both ends match. Do not ignore them on a real network, because a mismatch can leak traffic between VLANs.</li>
+<li><strong>Not saving.</strong> The running configuration is lost on reload unless you save it with <code>wr</code>. I saved after each switch.</li>
+</ul>
+<h2>What I would remember from this</h2>
+<p>Decide the VLAN numbers and subnets first, apply the same template to every access switch, and verify each one before you move on. Then once the VLANs exist, the next job is giving each of them an address. I covered that in <a href="dhcp-dns-packet-tracer.html">DHCP and DNS in Packet Tracer</a>, and locking down the ports is in the <a href="cisco-port-security-basics.html">port security article</a>.</p>
+<div class="cta-inline"><span>Want every command on one page? <strong>Cisco Networking Guide</strong> · $14.99</span><a class="button button-primary" href="https://tanmayster357.gumroad.com/l/cisco-command-guide" target="_blank" rel="noopener noreferrer">View on Gumroad <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></a></div></div>
 <aside class="cta-card" aria-label="Related guide"><img src="../img/guide-cisco.webp" alt="Cisco Networking Guide cover" width="300" height="200"><div><span class="price">$14.99 · AVAILABLE ON GUMROAD</span><h2>Cisco Networking Guide</h2><p>VLAN, OSPF, HSRP and EtherChannel commands in one page.</p><a class="button button-primary" href="https://tanmayster357.gumroad.com/l/cisco-command-guide" target="_blank" rel="noopener noreferrer">Buy on Gumroad <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></a></div></aside>
 <div class="ad-slot" data-ad-position="bottom"></div>
 </div>
-<section class="related"><div class="wrap"><h2>More articles</h2><div class="blog-grid"><a class="blog-card" href="ospf-single-area-packet-tracer.html" aria-label="OSPF Single-Area Configuration in Packet Tracer"><div class="blog-art has-image is-wide" style="aspect-ratio:1400/764"><img src="../img/art-ospf-single-area-packet-tracer.webp" alt="" loading="lazy" width="700" height="382"></div><div class="blog-content"><span class="blog-category">GUIDE / 06</span><h3>OSPF Single-Area Configuration in Packet Tracer</h3><p class="body-copy">Configure OSPF, silence the LAN side, and verify neighbours and routes.</p><span class="blog-foot">Read article <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></span></div></a>
-<a class="blog-card" href="hsrp-etherchannel-redundancy.html" aria-label="HSRP and EtherChannel: Redundancy Basics"><div class="blog-art has-image is-wide" style="aspect-ratio:1400/764"><img src="../img/art-hsrp-etherchannel-redundancy.webp" alt="" loading="lazy" width="700" height="382"></div><div class="blog-content"><span class="blog-category">GUIDE / 08</span><h3>HSRP and EtherChannel: Redundancy Basics</h3><p class="body-copy">A backup gateway and bundled links, so one failure does not take the network down.</p><span class="blog-foot">Read article <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></span></div></a>
-<a class="blog-card" href="secure-network-cisco-packet-tracer.html" aria-label="How to Set Up a Secure Enterprise Network in Cisco Packet Tracer"><div class="blog-art has-image"><img src="../img/art-packet-tracer.webp" alt="How to Set Up a Secure Enterprise Network in Cisco Packet Tracer" loading="lazy" width="640" height="430"></div><div class="blog-content"><span class="blog-category">GUIDE / 01</span><h3 class="sr-only">How to Set Up a Secure Enterprise Network in Cisco Packet Tracer</h3><span class="blog-foot">Read article <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></span></div></a></div><div class="blog-more"><a class="button button-quiet" href="../blog.html">All articles <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></a></div></div></section></main>
+<section class="related"><div class="wrap"><h2>More articles</h2><div class="blog-grid"><a class="blog-card" href="hsrp-etherchannel-redundancy.html" aria-label="HSRP and EtherChannel: Redundancy Basics"><div class="blog-art has-image is-wide" style="aspect-ratio:1400/764"><img src="../img/art-hsrp-etherchannel-redundancy.webp" alt="" loading="lazy" width="700" height="382"></div><div class="blog-content"><span class="blog-category">GUIDE / 08</span><h3>HSRP and EtherChannel: Redundancy Basics</h3><p class="body-copy">How I used LACP EtherChannel and HSRP version 2 to remove single points of failure in a four-site Packet Tracer network.</p><span class="blog-foot">Read article <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></span></div></a>
+<a class="blog-card" href="cisco-port-security-basics.html" aria-label="Cisco Port Security Basics"><div class="blog-art has-image is-wide" style="aspect-ratio:1400/764"><img src="../img/art-cisco-port-security-basics.webp" alt="" loading="lazy" width="700" height="382"></div><div class="blog-content"><span class="blog-category">GUIDE / 19</span><h3>Cisco Port Security Basics</h3><p class="body-copy">Port security, DHCP snooping, Dynamic ARP Inspection and native VLAN settings on access switches, with the verification output from my Packet Tracer lab.</p><span class="blog-foot">Read article <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></span></div></a>
+<a class="blog-card" href="dhcp-dns-packet-tracer.html" aria-label="DHCP and DNS in Cisco Packet Tracer"><div class="blog-art has-image is-wide" style="aspect-ratio:1400/764"><img src="../img/art-dhcp-dns-packet-tracer.webp" alt="" loading="lazy" width="700" height="382"></div><div class="blog-content"><span class="blog-category">GUIDE / 14</span><h3>DHCP and DNS in Cisco Packet Tracer</h3><p class="body-copy">One DHCP server for ten VLANs using helper addresses, plus a DNS server and records, built in Packet Tracer for a four-site network.</p><span class="blog-foot">Read article <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></span></div></a>
+</div><div class="blog-more"><a class="button button-quiet" href="../blog.html">All articles <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></a></div></div></section></main>
 <footer class="site-footer"><div class="wrap">
       <div class="footer-grid">
         <div><p class="footer-brand">Tanmay Sarkar Emon</p><p class="footer-copy">Cybersecurity · Networks · Web</p></div>

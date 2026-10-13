@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#07110f">
+<title>Setting Up a BIND9 DNS Server on Rocky Linux (Forward and Reverse Zones) — Tanmay Sarkar Emon</title>
+<link rel="canonical" href="https://tanmaysarkaremon.pages.dev/blog/bind9-dns-server-rocky-linux.html"><meta name="description" content="A lab walkthrough of BIND9 on Rocky Linux with forward and reverse zones, including the reverse zone file that refused to load.">
+<meta property="og:title" content="Setting Up a BIND9 DNS Server on Rocky Linux (Forward and Reverse Zones)"><meta property="og:description" content="A lab walkthrough of BIND9 on Rocky Linux with forward and reverse zones, including the reverse zone file that refused to load."><meta property="og:type" content="article"><meta property="og:url" content="https://tanmaysarkaremon.pages.dev/blog/bind9-dns-server-rocky-linux.html"><meta property="og:site_name" content="Tanmay Sarkar Emon"><meta property="og:image" content="https://tanmaysarkaremon.pages.dev/img/og/bind9-dns-server-rocky-linux.jpg"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="Setting Up a BIND9 DNS Server on Rocky Linux (Forward and Reverse Zones)"><meta name="twitter:description" content="A lab walkthrough of BIND9 on Rocky Linux with forward and reverse zones, including the reverse zone file that refused to load."><meta name="twitter:image" content="https://tanmaysarkaremon.pages.dev/img/og/bind9-dns-server-rocky-linux.jpg">
+<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "BlogPosting", "headline": "Setting Up a BIND9 DNS Server on Rocky Linux (Forward and Reverse Zones)", "description": "A lab walkthrough of BIND9 on Rocky Linux with forward and reverse zones, including the reverse zone file that refused to load.", "image": "https://tanmaysarkaremon.pages.dev/img/og/bind9-dns-server-rocky-linux.jpg", "datePublished": "2026-10-13", "dateModified": "2026-10-13", "author": {"@type": "Person", "name": "Tanmay Sarkar Emon", "url": "https://tanmaysarkaremon.pages.dev/about.html"}, "publisher": {"@type": "Person", "name": "Tanmay Sarkar Emon", "url": "https://tanmaysarkaremon.pages.dev/about.html"}, "mainEntityOfPage": "https://tanmaysarkaremon.pages.dev/blog/bind9-dns-server-rocky-linux.html", "inLanguage": "en"}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://tanmaysarkaremon.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Blog", "item": "https://tanmaysarkaremon.pages.dev/blog.html"}, {"@type": "ListItem", "position": 3, "name": "Setting Up a BIND9 DNS Server on Rocky Linux (Forward and Reverse Zones)", "item": "https://tanmaysarkaremon.pages.dev/blog/bind9-dns-server-rocky-linux.html"}]}]}</script>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%2307110f'/%3E%3Ctext x='16' y='21' text-anchor='middle' font-family='monospace' font-size='14' font-weight='700' fill='%2377e0a4'%3ETS%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../blog.css"></head>
+<body>
+<header class="site-header">
+    <div class="wrap nav-shell">
+      <a class="brand" href="../index.html" aria-label="Tanmay Sarkar Emon, home"><span class="brand-mark" aria-hidden="true">TS</span><span>Tanmay Sarkar Emon</span></a>
+      <nav class="desktop-nav" aria-label="Main navigation">
+        <a href="../index.html#home">Home</a><a href="../index.html#about">About</a><a href="../index.html#services">Services</a><a href="../index.html#projects">Projects</a><a href="../index.html#skills">Skills</a><a href="../index.html#shop">Digital Shop</a><a href="../blog.html" aria-current="page" style="color:var(--green)">Blog</a>
+      </nav>
+      <a class="nav-contact" href="../index.html#contact">CONTACT ↗</a>
+      <button class="menu-button" id="menu-toggle" type="button" aria-label="Open navigation menu" aria-expanded="false" aria-controls="mobile-navigation"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg><span>Menu</span></button>
+    </div>
+    <nav class="mobile-nav wrap" id="mobile-navigation" aria-label="Mobile navigation" hidden>
+      <a href="../index.html#home">Home</a><a href="../index.html#about">About</a><a href="../index.html#services">Services</a><a href="../index.html#projects">Projects</a><a href="../index.html#skills">Skills</a><a href="../index.html#shop">Digital Shop</a><a href="../blog.html">Blog</a><a href="../index.html#contact">Contact</a>
+    </nav>
+  </header>
+<main><div class="article-wrap page-top">
+<nav class="crumbs" aria-label="Breadcrumb"><a href="../index.html">Home</a><span>/</span><a href="../blog.html">Blog</a><span>/</span><span>Guide</span></nav>
+<header class="article-head"><span class="blog-category">GUIDE / 23</span><h1>Setting Up a BIND9 DNS Server on Rocky Linux (Forward and Reverse Zones)</h1><p class="article-lead">A lab walkthrough of BIND9 on Rocky Linux with forward and reverse zones, including the reverse zone file that refused to load.</p><p class="article-meta" style="margin-top:14px">By Tanmay Sarkar Emon · <time datetime="2026-10-13">Published 13 Oct 2026</time> · Updated <time datetime="2026-10-13">13 Oct 2026</time> · 4 min read</p><img class="article-cover" src="../img/art-linux.webp" alt="Setting Up a BIND9 DNS Server on Rocky Linux (Forward and Reverse Zones)" width="1400" height="764"></header>
+<div class="article-body">
+<p>DNS was the first chapter of my group's server assignment, and everything after it, mail and web, depends on it. The goal was simple to say: make <code>maliserver.bungkus.org</code> and <code>maliclient.bungkus.org</code> resolve to each other, both forward (name to IP) and reverse (IP to name). The one real obstacle was a badly prepared reverse zone file. The lab was a Rocky Linux server at 192.168.200.4 and an Ubuntu client at 192.168.200.3, with a made-up domain, bungkus.org.</p>
+<h2>Install and start BIND</h2>
+<p>On Rocky the package is <code>bind</code>, and the service is called <code>named</code>. I installed it, enabled it, and backed up the default config before editing anything.</p>
+<pre><code>sudo dnf install -y bind bind-utils
+sudo systemctl enable --now named
+sudo cp -p /etc/named.conf /etc/named.conf.bak</code></pre>
+<h2>named.conf: options and two zones</h2>
+<p>For the lab I let named listen on every interface and answer any client. That is fine on a closed lab network and a bad idea on a public server. Then I declared two zones. The forward zone is just the domain. The reverse zone is the network written backwards: for 192.168.200.0/24 it is <code>200.168.192.in-addr.arpa</code>.</p>
+<pre><code>zone &quot;bungkus.org&quot; IN {
+        type master;
+        file &quot;forword.bungkus.org.db&quot;;
+        allow-update { none; };
+};
+
+zone &quot;200.168.192.in-addr.arpa&quot; IN {
+        type master;
+        file &quot;rvs.200.168.192.db&quot;;
+        allow-update { none; };
+};</code></pre>
+<p>Yes, my file name has a typo ("forword"). It still works, because BIND matches the file by the exact name in <code>named.conf</code>, not by what it ought to be called. If you misspell it in one place and not the other, the zone will not load.</p>
+<h2>The zone files</h2>
+<p>Both files live in <code>/var/named</code>. The forward file needs an SOA record, an NS record and A records for the two hosts. The reverse file needs the SOA, the NS record and PTR records that map the last octet back to a name: 4 points to the server, 3 to the client. I built the reverse file from a sample template, and that is where my problems started.</p>
+<div class="ad-slot" data-ad-position="middle"></div>
+<h2>The reverse zone that would not load</h2>
+<p>I validated with <code>named-checkzone</code> and got a wall of errors: "ignoring out-of-zone data" for addresses like 1.0.10.in-addr.arpa, then "has 0 SOA records", "has no NS records" and finally "not loaded due to errors."</p>
+<figure class="lab-shot"><img src="../img/lab-bind-checkzone-errors.webp" alt="named-checkzone output with out-of-zone data and missing SOA errors" width="878" height="501" loading="lazy"><figcaption>The failed named-checkzone runs on the reverse zone. Two separate mistakes are hiding in this output.</figcaption></figure>
+<p>There were two causes. First, the sample file I started from still had records for an unrelated 10.x network, which do not belong in a 192.168.200 reverse zone, so BIND ignored them. With those ignored there was no SOA and no NS record left, which explains the next two errors. Second, my very first check used the file name as the zone name argument. The syntax is <code>named-checkzone &lt;zone-name&gt; &lt;file&gt;</code>:</p>
+<pre><code>named-checkzone 200.168.192.in-addr.arpa /var/named/rvs.200.168.192.db</code></pre>
+<p>I deleted the leftover records, wrote a proper SOA, an NS record and the two PTR records, and re-ran the check with the correct zone name until it printed "loaded serial 2001062501" and OK. The forward zone passed on the first try.</p>
+<h2>Firewall and restart</h2>
+<p>DNS uses port 53 over both UDP and TCP, so I opened both and reloaded firewalld:</p>
+<pre><code>sudo firewall-cmd --permanent --add-port=53/udp
+sudo firewall-cmd --permanent --add-port=53/tcp
+sudo firewall-cmd --reload
+sudo systemctl restart named</code></pre>
+<p>Right after each restart, the log showed "network unreachable resolving" messages for the root servers. They looked scary, but they are just BIND trying to prime its cache before it can reach the outside world. Once the zones loaded and the firewall was open, the service reported everything loaded and running, and the messages did not stop anything from resolving.</p>
+<h2>Testing from the server and the client</h2>
+<p>On the server I used <code>nslookup</code>, <code>ping</code> and <code>dig</code> against both names. The dig output showed an ANSWER SECTION with the right address, answered by 192.168.200.4 on port 53.</p>
+<figure class="lab-shot"><img src="../img/lab-bind-dig-answer.webp" alt="dig output returning the address of maliclient.bungkus.org" width="667" height="444" loading="lazy"><figcaption>dig answering from the local BIND server.</figcaption></figure>
+<p>On the Ubuntu client I enabled <code>systemd-resolved</code>, then set <code>DNS=192.168.200.4 8.8.8.8</code> under [Resolve] in <code>/etc/systemd/resolved.conf</code>, so the lab server is asked first and a public resolver is the fallback. <code>nmcli</code> confirmed both DNS servers on the interface, and nslookup and ping by name worked from the client. I had also removed the static entries from <code>/etc/hosts</code> beforehand, otherwise a test could succeed without DNS doing anything.</p>
+<h2>Checklist if your zone will not load</h2>
+<ul>
+<li>Run <code>named-checkzone</code> with the zone name first and the file second.</li>
+<li>Make sure the file name in <code>named.conf</code> matches the real file exactly.</li>
+<li>Look for leftover records from a template, especially in reverse zones.</li>
+<li>Increase the SOA serial every time you edit a zone, then restart or reload named.</li>
+<li>Open 53/tcp as well as 53/udp.</li>
+</ul>
+<p>This zone file kept growing in later chapters: the <a href="postfix-dovecot-mail-server-troubleshooting.html">mail server</a> added an MX record and the <a href="apache-virtual-hosts-self-signed-ssl.html">web server</a> added an A record for the intranet site.</p>
+<div class="cta-inline"><span>Want every command on one page? <strong>Linux &amp; Enterprise Configuration Guide</strong> · $9.99</span><a class="button button-primary" href="https://tanmayster357.gumroad.com/l/linux-server-guide" target="_blank" rel="noopener noreferrer">View on Gumroad <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></a></div></div>
+<aside class="cta-card" aria-label="Related guide"><img src="../img/guide-linux.webp" alt="Linux &amp; Enterprise Configuration Guide cover" width="300" height="200"><div><span class="price">$9.99 · AVAILABLE ON GUMROAD</span><h2>Linux &amp; Enterprise Configuration Guide</h2><p>PDF cheat sheet: BIND9, Apache, Fail2ban and hardening basics.</p><a class="button button-primary" href="https://tanmayster357.gumroad.com/l/linux-server-guide" target="_blank" rel="noopener noreferrer">Buy on Gumroad <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></a></div></aside>
+<div class="ad-slot" data-ad-position="bottom"></div>
+</div>
+<section class="related"><div class="wrap"><h2>More articles</h2><div class="blog-grid"><a class="blog-card" href="dhcp-dns-packet-tracer.html" aria-label="DHCP and DNS in Cisco Packet Tracer"><div class="blog-art has-image is-wide" style="aspect-ratio:1400/764"><img src="../img/art-dhcp-dns-packet-tracer.webp" alt="" loading="lazy" width="700" height="382"></div><div class="blog-content"><span class="blog-category">GUIDE / 14</span><h3>DHCP and DNS in Cisco Packet Tracer</h3><p class="body-copy">One DHCP server for ten VLANs using helper addresses, plus a DNS server and records, built in Packet Tracer for a four-site network.</p><span class="blog-foot">Read article <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></span></div></a>
+<a class="blog-card" href="postfix-dovecot-mail-server-troubleshooting.html" aria-label="Postfix and Dovecot Mail Server: 7 Problems I Hit and How I Fixed Them"><div class="blog-art has-image is-wide" style="aspect-ratio:1400/764"><img src="../img/art-linux-log-reading-journalctl-auth-log.webp" alt="" loading="lazy" width="700" height="382"></div><div class="blog-content"><span class="blog-category">GUIDE / 24</span><h3>Postfix and Dovecot Mail Server: 7 Problems I Hit and How I Fixed Them</h3><p class="body-copy">Setting up Postfix and Dovecot on Rocky Linux was easy. Getting Thunderbird to send mail was not. Here are the real errors and fixes.</p><span class="blog-foot">Read article <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></span></div></a>
+<a class="blog-card" href="apache-virtual-hosts-self-signed-ssl.html" aria-label="Apache Virtual Hosts with a Self-Signed SSL Certificate and HTTP Redirect"><div class="blog-art has-image is-wide" style="aspect-ratio:1400/764"><img src="../img/art-linux-users-groups-sudo.webp" alt="" loading="lazy" width="700" height="382"></div><div class="blog-content"><span class="blog-category">GUIDE / 25</span><h3>Apache Virtual Hosts with a Self-Signed SSL Certificate and HTTP Redirect</h3><p class="body-copy">Two websites on one Apache server, HTTPS with a self-signed certificate, and why Firefox still said Not Secure after curl said it was fine.</p><span class="blog-foot">Read article <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></span></div></a>
+</div><div class="blog-more"><a class="button button-quiet" href="../blog.html">All articles <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></a></div></div></section></main>
+<footer class="site-footer"><div class="wrap">
+      <div class="footer-grid">
+        <div><p class="footer-brand">Tanmay Sarkar Emon</p><p class="footer-copy">Cybersecurity · Networks · Web</p></div>
+        <div><h2 class="footer-heading">Based in</h2><p class="footer-copy">Asia Pacific University<br>Kuala Lumpur, Malaysia<br>Mon–Sat, 10:00–22:00 MYT</p></div>
+        <div><h2 class="footer-heading">Explore</h2><div class="footer-links"><a href="../index.html#about">About</a><a href="../index.html#projects">Projects</a><a href="../blog.html">Blog</a><a href="../index.html#shop">Digital Shop</a></div></div>
+        <div><h2 class="footer-heading">Site</h2><div class="footer-links"><a href="../about.html">About</a><a href="../contact.html">Contact</a><a href="../privacy.html">Privacy Policy</a><a href="../disclaimer.html">Disclaimer</a></div></div>
+        <div><h2 class="footer-heading">Get in touch</h2><div class="footer-links"><a href="mailto:tanmayskr1802@gmail.com">tanmayskr1802@gmail.com</a><a href="https://wa.me/8801612038913" target="_blank" rel="noopener noreferrer">WhatsApp</a></div></div>
+      </div>
+      <div class="footer-bottom"><span>© 2026 Tanmay Sarkar Emon. All Rights Reserved.</span>
+        <div class="footer-social"><a href="https://github.com/tanmay1802-art" target="_blank" rel="noopener noreferrer">GitHub ↗</a><a href="https://tanmayster357.gumroad.com" target="_blank" rel="noopener noreferrer">Gumroad ↗</a><a href="https://wa.me/8801612038913" target="_blank" rel="noopener noreferrer">WhatsApp ↗</a></div></div>
+    </div></footer>
+<script>(function(){var b=document.getElementById("menu-toggle"),m=document.getElementById("mobile-navigation");if(!b||!m)return;b.addEventListener("click",function(){var o=m.hasAttribute("hidden");if(o)m.removeAttribute("hidden");else m.setAttribute("hidden","");b.setAttribute("aria-expanded",String(o));});})();</script>
+<script src="../ads.js" defer></script>
+</body></html>

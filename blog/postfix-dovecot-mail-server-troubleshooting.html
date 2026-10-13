@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#07110f">
+<title>Postfix and Dovecot Mail Server: 7 Problems I Hit and How I Fixed Them — Tanmay Sarkar Emon</title>
+<link rel="canonical" href="https://tanmaysarkaremon.pages.dev/blog/postfix-dovecot-mail-server-troubleshooting.html"><meta name="description" content="Setting up Postfix and Dovecot on Rocky Linux was easy. Getting Thunderbird to send mail was not. Here are the real errors and fixes.">
+<meta property="og:title" content="Postfix and Dovecot Mail Server: 7 Problems I Hit and How I Fixed Them"><meta property="og:description" content="Setting up Postfix and Dovecot on Rocky Linux was easy. Getting Thunderbird to send mail was not. Here are the real errors and fixes."><meta property="og:type" content="article"><meta property="og:url" content="https://tanmaysarkaremon.pages.dev/blog/postfix-dovecot-mail-server-troubleshooting.html"><meta property="og:site_name" content="Tanmay Sarkar Emon"><meta property="og:image" content="https://tanmaysarkaremon.pages.dev/img/og/postfix-dovecot-mail-server-troubleshooting.jpg"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="Postfix and Dovecot Mail Server: 7 Problems I Hit and How I Fixed Them"><meta name="twitter:description" content="Setting up Postfix and Dovecot on Rocky Linux was easy. Getting Thunderbird to send mail was not. Here are the real errors and fixes."><meta name="twitter:image" content="https://tanmaysarkaremon.pages.dev/img/og/postfix-dovecot-mail-server-troubleshooting.jpg">
+<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "BlogPosting", "headline": "Postfix and Dovecot Mail Server: 7 Problems I Hit and How I Fixed Them", "description": "Setting up Postfix and Dovecot on Rocky Linux was easy. Getting Thunderbird to send mail was not. Here are the real errors and fixes.", "image": "https://tanmaysarkaremon.pages.dev/img/og/postfix-dovecot-mail-server-troubleshooting.jpg", "datePublished": "2026-10-13", "dateModified": "2026-10-13", "author": {"@type": "Person", "name": "Tanmay Sarkar Emon", "url": "https://tanmaysarkaremon.pages.dev/about.html"}, "publisher": {"@type": "Person", "name": "Tanmay Sarkar Emon", "url": "https://tanmaysarkaremon.pages.dev/about.html"}, "mainEntityOfPage": "https://tanmaysarkaremon.pages.dev/blog/postfix-dovecot-mail-server-troubleshooting.html", "inLanguage": "en"}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://tanmaysarkaremon.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Blog", "item": "https://tanmaysarkaremon.pages.dev/blog.html"}, {"@type": "ListItem", "position": 3, "name": "Postfix and Dovecot Mail Server: 7 Problems I Hit and How I Fixed Them", "item": "https://tanmaysarkaremon.pages.dev/blog/postfix-dovecot-mail-server-troubleshooting.html"}]}]}</script>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%2307110f'/%3E%3Ctext x='16' y='21' text-anchor='middle' font-family='monospace' font-size='14' font-weight='700' fill='%2377e0a4'%3ETS%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../blog.css"></head>
+<body>
+<header class="site-header">
+    <div class="wrap nav-shell">
+      <a class="brand" href="../index.html" aria-label="Tanmay Sarkar Emon, home"><span class="brand-mark" aria-hidden="true">TS</span><span>Tanmay Sarkar Emon</span></a>
+      <nav class="desktop-nav" aria-label="Main navigation">
+        <a href="../index.html#home">Home</a><a href="../index.html#about">About</a><a href="../index.html#services">Services</a><a href="../index.html#projects">Projects</a><a href="../index.html#skills">Skills</a><a href="../index.html#shop">Digital Shop</a><a href="../blog.html" aria-current="page" style="color:var(--green)">Blog</a>
+      </nav>
+      <a class="nav-contact" href="../index.html#contact">CONTACT ↗</a>
+      <button class="menu-button" id="menu-toggle" type="button" aria-label="Open navigation menu" aria-expanded="false" aria-controls="mobile-navigation"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg><span>Menu</span></button>
+    </div>
+    <nav class="mobile-nav wrap" id="mobile-navigation" aria-label="Mobile navigation" hidden>
+      <a href="../index.html#home">Home</a><a href="../index.html#about">About</a><a href="../index.html#services">Services</a><a href="../index.html#projects">Projects</a><a href="../index.html#skills">Skills</a><a href="../index.html#shop">Digital Shop</a><a href="../blog.html">Blog</a><a href="../index.html#contact">Contact</a>
+    </nav>
+  </header>
+<main><div class="article-wrap page-top">
+<nav class="crumbs" aria-label="Breadcrumb"><a href="../index.html">Home</a><span>/</span><a href="../blog.html">Blog</a><span>/</span><span>Guide</span></nav>
+<header class="article-head"><span class="blog-category">GUIDE / 24</span><h1>Postfix and Dovecot Mail Server: 7 Problems I Hit and How I Fixed Them</h1><p class="article-lead">Setting up Postfix and Dovecot on Rocky Linux was easy. Getting Thunderbird to send mail was not. Here are the real errors and fixes.</p><p class="article-meta" style="margin-top:14px">By Tanmay Sarkar Emon · <time datetime="2026-10-13">Published 13 Oct 2026</time> · Updated <time datetime="2026-10-13">13 Oct 2026</time> · 3 min read</p><img class="article-cover" src="../img/art-linux-log-reading-journalctl-auth-log.webp" alt="Postfix and Dovecot Mail Server: 7 Problems I Hit and How I Fixed Them" width="1400" height="764"></header>
+<div class="article-body">
+<p>The mail chapter of my group's server assignment looked straightforward on paper: install Postfix and Dovecot, create two users, send mail between them. The installation was the easy part. Getting a mail client to send was where the real work was. My group kept a troubleshooting log of every failure, and this article is that log, cleaned up. The setup was Rocky Linux as the mail server and an Ubuntu desktop with Thunderbird as the client, on the lab domain bungkus.org.</p>
+<h2>The basic setup in one minute</h2>
+<p>The mail server needs an MX record in the zone (see my <a href="bind9-dns-server-rocky-linux.html">BIND article</a>), Postfix to send and receive, and Dovecot to let clients read their mailboxes. The core Postfix settings were these:</p>
+<pre><code>myhostname = maliserver.bungkus.org
+mydomain = bungkus.org
+myorigin = $mydomain
+inet_interfaces = all
+mydestination = $myhostname, localhost.$mydomain, localhost, $mydomain
+home_mailbox = Maildir/</code></pre>
+<p>On the Dovecot side I used <code>mail_location = maildir:~/Maildir</code> and set <code>disable_plaintext_auth = no</code> with the plain and login mechanisms. That is acceptable here only because the connection is wrapped in TLS. Local delivery between the two users was the first thing I tested.</p>
+<h2>Problem 1: port 465 refused connections</h2>
+<p>Thunderbird could not connect to SMTPS. The reason was that the <code>smtps</code> line in <code>/etc/postfix/master.cf</code> was still commented out. The <code>-o</code> option lines under it did nothing while the parent service line was disabled. I uncommented it, ran <code>postfix check</code>, restarted Postfix and tested the port with <code>nc -zv</code>.</p>
+<h2>Problem 2: "Overriding earlier entry" in the logs</h2>
+<p>A duplicate certificate path in <code>main.cf</code> from an earlier edit caused this warning. It was harmless, Postfix stayed active, and I left it alone. Clean it up on a real server, but do not panic when you see it.</p>
+<h2>Problem 3: Thunderbird's certificate dialog froze</h2>
+<p>Because the server uses a self-signed certificate, Thunderbird asks you to add a security exception. On a non-default port the dialog froze when I clicked Confirm. This was a Thunderbird bug, not a server problem, and I proved that by testing the server directly with <code>openssl s_client</code>, <code>nc</code> and <code>systemctl status dovecot</code>. If the server side checks out, stop editing server configs.</p>
+<div class="ad-slot" data-ad-position="middle"></div>
+<h2>Problem 4: certificate imported, still untrusted</h2>
+<p>My workaround was importing the certificate with <code>certutil</code>. It reported success, but Thunderbird still said the certificate was untrusted. Thunderbird on this Ubuntu machine was a snap package, and snap confinement kept it from reliably seeing changes I made to the certificate database from the command line. I removed the snap and installed Thunderbird from Mozilla's PPA as a normal .deb, and the problem went away.</p>
+<figure class="lab-shot"><img src="../img/lab-mail-self-signed-error.webp" alt="Thunderbird Send Message Error saying the certificate is not trusted because it is self-signed" width="867" height="749" loading="lazy"><figcaption>The send error I kept seeing before the certificate was trusted properly.</figcaption></figure>
+<h2>Problem 5: login failed right after account creation</h2>
+<p>I had typed the full email address in the Username field. Dovecot authenticates against the local Linux account, so the username is just <code>tanmay</code>, not <code>tanmay@bungkus.org</code>. I changed it in both the incoming and outgoing server settings.</p>
+<h2>Problem 6: "No route to host" when sending</h2>
+<p>Sending failed on ports 465 and 587. My firewalld rules allowed smtp, imap, imaps, pop3 and pop3s, and never smtps or 587. The fix:</p>
+<pre><code>sudo firewall-cmd --permanent --add-service=smtps
+sudo firewall-cmd --permanent --add-port=587/tcp
+sudo firewall-cmd --reload</code></pre>
+<h2>Problem 7: "Login to account failed" with the correct password</h2>
+<p>This was the hardest one. Postfix had <code>smtpd_sasl_auth_enable</code> set to no, and <code>smtpd_sasl_type</code> was cyrus instead of dovecot, and Dovecot had no authentication socket for Postfix to talk to. So I enabled Dovecot-based SASL in Postfix with <code>postconf</code>, and added a <code>unix_listener</code> for <code>/var/spool/postfix/private/auth</code> inside the <code>service auth</code> block of <code>/etc/dovecot/conf.d/10-master.conf</code>.</p>
+<p>A related fix on the Dovecot side was SELinux. After copying certificates into <code>/etc/pki/mail</code>, I had to give them the right context before Dovecot would read them:</p>
+<pre><code>sudo semanage fcontext -a -t cert_t &quot;/etc/pki/mail(/.*)?&quot;
+sudo restorecon -Rv /etc/pki/mail
+sudo systemctl restart dovecot</code></pre><figure class="lab-shot"><img src="../img/lab-mail-selinux-context-fix.webp" alt="Terminal showing semanage fcontext and restorecon commands on /etc/pki/mail" width="777" height="172" loading="lazy"><figcaption>Fixing the SELinux context on the certificate folder.</figcaption></figure>
+<h2>A debugging order that would have saved me time</h2>
+<ul>
+<li>Test the port first with <code>nc -zv host port</code>. If it refuses, the problem is the service or the firewall, not the password.</li>
+<li>Check <code>journalctl</code> or <code>/var/log/maillog</code> on the server while you try again from the client.</li>
+<li>Prove the server works from the command line before blaming the server config. My Thunderbird bugs were client-side.</li>
+<li>Change one thing at a time and restart the service you changed.</li>
+</ul>
+<p>After all seven fixes, Thunderbird sent and received mail between tanmay and sarkar. Later I added Fail2ban to watch Dovecot's logins, which I wrote up in the <a href="linux-server-hardening-fail2ban.html">Fail2ban article</a>.</p>
+<div class="cta-inline"><span>Want every command on one page? <strong>Linux &amp; Enterprise Configuration Guide</strong> · $9.99</span><a class="button button-primary" href="https://tanmayster357.gumroad.com/l/linux-server-guide" target="_blank" rel="noopener noreferrer">View on Gumroad <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></a></div></div>
+<aside class="cta-card" aria-label="Related guide"><img src="../img/guide-linux.webp" alt="Linux &amp; Enterprise Configuration Guide cover" width="300" height="200"><div><span class="price">$9.99 · AVAILABLE ON GUMROAD</span><h2>Linux &amp; Enterprise Configuration Guide</h2><p>PDF cheat sheet: BIND9, Apache, Fail2ban and hardening basics.</p><a class="button button-primary" href="https://tanmayster357.gumroad.com/l/linux-server-guide" target="_blank" rel="noopener noreferrer">Buy on Gumroad <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></a></div></aside>
+<div class="ad-slot" data-ad-position="bottom"></div>
+</div>
+<section class="related"><div class="wrap"><h2>More articles</h2><div class="blog-grid"><a class="blog-card" href="bind9-dns-server-rocky-linux.html" aria-label="Setting Up a BIND9 DNS Server on Rocky Linux (Forward and Reverse Zones)"><div class="blog-art has-image is-wide" style="aspect-ratio:1400/764"><img src="../img/art-linux.webp" alt="" loading="lazy" width="700" height="382"></div><div class="blog-content"><span class="blog-category">GUIDE / 23</span><h3>Setting Up a BIND9 DNS Server on Rocky Linux (Forward and Reverse Zones)</h3><p class="body-copy">A lab walkthrough of BIND9 on Rocky Linux with forward and reverse zones, including the reverse zone file that refused to load.</p><span class="blog-foot">Read article <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></span></div></a>
+<a class="blog-card" href="linux-server-hardening-fail2ban.html" aria-label="Beginner’s Guide to Linux Server Hardening &amp;amp; Fail2ban"><div class="blog-art has-image is-wide" style="aspect-ratio:1400/764"><img src="../img/art-linux.webp" alt="" loading="lazy" width="700" height="382"></div><div class="blog-content"><span class="blog-category">GUIDE / 02</span><h3>Beginner’s Guide to Linux Server Hardening &amp; Fail2ban</h3><p class="body-copy">How I set up Fail2ban on a Rocky Linux lab server, attacked it from my own Ubuntu client and watched it ban me.</p><span class="blog-foot">Read article <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></span></div></a>
+<a class="blog-card" href="apache-virtual-hosts-self-signed-ssl.html" aria-label="Apache Virtual Hosts with a Self-Signed SSL Certificate and HTTP Redirect"><div class="blog-art has-image is-wide" style="aspect-ratio:1400/764"><img src="../img/art-linux-users-groups-sudo.webp" alt="" loading="lazy" width="700" height="382"></div><div class="blog-content"><span class="blog-category">GUIDE / 25</span><h3>Apache Virtual Hosts with a Self-Signed SSL Certificate and HTTP Redirect</h3><p class="body-copy">Two websites on one Apache server, HTTPS with a self-signed certificate, and why Firefox still said Not Secure after curl said it was fine.</p><span class="blog-foot">Read article <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></span></div></a>
+</div><div class="blog-more"><a class="button button-quiet" href="../blog.html">All articles <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></a></div></div></section></main>
+<footer class="site-footer"><div class="wrap">
+      <div class="footer-grid">
+        <div><p class="footer-brand">Tanmay Sarkar Emon</p><p class="footer-copy">Cybersecurity · Networks · Web</p></div>
+        <div><h2 class="footer-heading">Based in</h2><p class="footer-copy">Asia Pacific University<br>Kuala Lumpur, Malaysia<br>Mon–Sat, 10:00–22:00 MYT</p></div>
+        <div><h2 class="footer-heading">Explore</h2><div class="footer-links"><a href="../index.html#about">About</a><a href="../index.html#projects">Projects</a><a href="../blog.html">Blog</a><a href="../index.html#shop">Digital Shop</a></div></div>
+        <div><h2 class="footer-heading">Site</h2><div class="footer-links"><a href="../about.html">About</a><a href="../contact.html">Contact</a><a href="../privacy.html">Privacy Policy</a><a href="../disclaimer.html">Disclaimer</a></div></div>
+        <div><h2 class="footer-heading">Get in touch</h2><div class="footer-links"><a href="mailto:tanmayskr1802@gmail.com">tanmayskr1802@gmail.com</a><a href="https://wa.me/8801612038913" target="_blank" rel="noopener noreferrer">WhatsApp</a></div></div>
+      </div>
+      <div class="footer-bottom"><span>© 2026 Tanmay Sarkar Emon. All Rights Reserved.</span>
+        <div class="footer-social"><a href="https://github.com/tanmay1802-art" target="_blank" rel="noopener noreferrer">GitHub ↗</a><a href="https://tanmayster357.gumroad.com" target="_blank" rel="noopener noreferrer">Gumroad ↗</a><a href="https://wa.me/8801612038913" target="_blank" rel="noopener noreferrer">WhatsApp ↗</a></div></div>
+    </div></footer>
+<script>(function(){var b=document.getElementById("menu-toggle"),m=document.getElementById("mobile-navigation");if(!b||!m)return;b.addEventListener("click",function(){var o=m.hasAttribute("hidden");if(o)m.removeAttribute("hidden");else m.setAttribute("hidden","");b.setAttribute("aria-expanded",String(o));});})();</script>
+<script src="../ads.js" defer></script>
+</body></html>
