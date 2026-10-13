@@ -237,6 +237,7 @@
     .blog-content h3:not(.sr-only) { min-height: 54px; margin: 12px 0 18px; font-size: .95rem; line-height: 1.45; letter-spacing: -.025em; }
     .reviews-box { display: flex; align-items: center; justify-content: space-between; gap: 26px; padding: 32px; border: 1px dashed rgba(119,224,164,.35); background: rgba(12,25,21,.45); }
     .reviews-box p { max-width: 590px; margin: 8px 0 0; color: var(--muted); font-size: .86rem; line-height: 1.8; }
+        .reviews-box[hidden] { display: none; }
     .reviews-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-bottom: 18px; }
     .reviews-grid:empty { display: none; }
     .review-card { margin: 0; padding: 22px; border: 1px solid var(--line); background: var(--surface); }
@@ -536,11 +537,10 @@
         <div class="reviews-box">
           <div>
             <span class="eyebrow">A NOTE ON FEEDBACK</span>
-            <p>Reviews from students and clients will appear here after the first projects are delivered.</p>
+            <p>Reviews from students and clients appear here once they are approved.</p>
           <p class="section-more">I only publish real feedback from people I have worked with, and only with their permission. If you used one of my guides or got help with a lab, a short review helps the next student decide whether it is right for them.</p>
           </div>
           <div class="reviews-actions">
-            <span class="reviews-status">FEEDBACK COMING SOON</span>
             <a class="button button-quiet" href="#review-form">Write a review</a>
           </div>
         </div>
