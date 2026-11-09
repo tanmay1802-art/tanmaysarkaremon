@@ -639,7 +639,7 @@
       const SUPABASE_KEY = "sb_publishable_7yUwzdEk3zs5H_jJk28GxA_NkSWJP66";
       const AUTO_PUBLISH = false;
       const BACKEND_ON = Boolean(SUPABASE_URL && SUPABASE_KEY);
-      const projectImages = {"ctf": "img/inline-02.webp", "scanner": "img/inline-03.webp", "study": "img/inline-04.webp", "cctv": "img/inline-05.webp", "exam": "img/inline-06.webp", "book": "img/inline-07.webp", "codecamp": "img/inline-08.webp", "cinema": "img/inline-09.webp", "hospital": "img/inline-10.webp", "shape": "img/inline-11.webp", "bash": "img/inline-12.webp", "packet-tracer": "img/inline-13.webp", "forensics": "img/inline-14.webp", "classifier": "img/inline-15.webp"};
+      const projectImages = {"ctf": "img/inline-02.webp", "scanner": "img/inline-03.webp", "study": "img/inline-04.webp", "cctv": "img/inline-05.webp", "exam": "img/inline-06.webp", "book": "img/inline-07.webp", "codecamp": "img/inline-08.webp", "cinema": "img/inline-09.webp", "hospital": "img/inline-10.webp", "shape": "img/inline-11.webp", "bash": "img/inline-12.webp", "packet-tracer": "img/inline-13.webp", "forensics": "img/inline-14.webp", "classifier": "img/inline-15.webp", "burp": "img/inline-19.webp"};
       const projects = [
         { title: "Enterprise Network Design", category: "network", kind: "packet-tracer", type: "NETWORKS", description: "Multi-branch Cisco Packet Tracer network: static routing to HSRP, EtherChannel, OSPF, DHCP relay, IPv6 and Layer 2 security.", tags: ["Cisco", "OSPF", "VLAN", "IPv6"], slug: "Enterprise-Network-Design" },
         { title: "Linux Enterprise Infrastructure", category: "network", kind: "bash", type: "SYSTEMS", description: "Simulated corporate environment with BIND9, Postfix, Dovecot, Apache, Fail2ban, VPN and a honeypot, secured with SSL/TLS.", tags: ["BIND9", "Apache", "Fail2ban", "VPN"], slug: "Linux-Enterprise-Infrastructure" },
@@ -654,7 +654,7 @@
         { title: "Exam Grading System", category: "software", kind: "exam", type: "SOFTWARE", description: "Python application that takes marks for different subjects and calculates and displays student grades.", tags: ["Python"], slug: "Exam-Grading-system" },
         { title: "Shape Management System", category: "software", kind: "shape", type: "SOFTWARE", description: "Assembly and C# generator for Circle, Square, Triangle, Rectangle and Diamond patterns.", tags: ["Assembly", "C#"], slug: "-Shape-Management-System" },
         { title: "Python Port Scanner", category: "software", kind: "scanner", type: "SECURITY &amp; SOFTWARE", description: "Basic Python port scanner with socket and client-server fundamentals, built to learn networking and cybersecurity.", tags: ["Python", "Sockets", "TCP/UDP"], slug: "Portscanner", wide: true },
-        { title: "CTF Writeups", category: "network", kind: "ctf", type: "CTF &amp; SECURITY", description: "Step-by-step writeups of 12 solved CTF challenges in Crypto, Web and Forensics, each with screenshots.", tags: ["Crypto", "Web", "Forensics", "Writeups"], slug: "CTF-Writeups", wide: true }
+        { title: "CTF Writeups", category: "network", kind: "ctf", type: "CTF &amp; SECURITY", description: "Step-by-step writeups of 12 solved CTF challenges in Crypto, Web and Forensics, each with screenshots.", tags: ["Crypto", "Web", "Forensics", "Writeups"], slug: "CTF-Writeups", wide: true },{ title: "PortSwigger Web Security Academy Writeups", category: "network", kind: "burp", type: "SECURITY &amp; WRITEUPS", description: "Documented walkthroughs of solved PortSwigger Web Security Academy labs, including Path Traversal and Access Control, using Burp Suite.", tags: ["Burp Suite", "Access Control", "Web Security"], slug: "PortSwigger-Academy-Writeups", wide: true }
       ];
       const skillGroups = [
         ["Networking", ["Cisco Packet Tracer", "OSPF", "VLAN", "Subnetting"]],
@@ -746,7 +746,7 @@
           shape: '<span class="term-muted">shape / generator</span><br>  *  <br> *** <br>*****<br>diamond · 5 rows<br>assembly + c#<br><span class="term-accent">$ _</span>',
           scanner: '<span class="term-muted">portscan / 192.168.1.10</span><br>22/tcp&nbsp; open<br>80/tcp&nbsp; open<br>443/tcp closed<br><span class="term-accent">scan complete</span>'
         };
-        if (projectImages[kind]) return `<div class="project-art has-image"><img src="${projectImages[kind]}" alt="Preview of the ${kind.replace("-", " ")} project" loading="lazy" width="${(kind === "scanner" || kind === "ctf") ? 960 : 480}" height="${(kind === "scanner" || kind === "ctf") ? 536 : 715}"></div>`;
+        if (projectImages[kind]) return `<div class="project-art has-image"><img src="${projectImages[kind]}" alt="Preview of the ${kind.replace("-", " ")} project" loading="lazy" width="${(kind === "scanner" || kind === "ctf"  || kind === "burp") ? 960 : 480}" height="${(kind === "scanner" || kind === "ctf"  || kind === "burp") ? 536 : 715}"></div>`;
         return `<div class="project-art" aria-hidden="true"><div class="art-terminal">${rows[kind] || ""}</div></div>`;
       };
       const projectHost = document.getElementById("projects-grid");
