@@ -121,8 +121,11 @@
     .fact-list { display: flex; flex-wrap: wrap; gap: 8px; margin: 22px 0 34px; }
     .fact { padding: 7px 10px; border: 1px solid var(--line); color: #b7c7bd; font: 400 .68rem var(--mono); }
     .progress-list { display: grid; grid-template-columns: 1fr 1fr; gap: 21px 26px; }
-    .progress-head { display: flex; justify-content: space-between; gap: 12px; margin-bottom: 9px; font-size: .77rem; }
-    .progress-head span:last-child { color: #85998d; font: 400 .69rem var(--mono); }
+    .progress-head { display: block; margin-bottom: 11px; font-size: .86rem; }
+    .progress-head span:first-child { display: block; color: #eef6f0; font-weight: 600; }
+    .progress-head span:last-child { display: block; margin-top: 6px; color: #85998d; font: 400 .69rem/1.7 var(--mono); }
+    .progress-item { display: flex; flex-direction: column; }
+    .progress-rail { margin-top: auto; }
     .progress-rail { height: 4px; overflow: hidden; background: #1a2a23; }
     .progress-fill { width: 0; height: 100%; background: linear-gradient(90deg, #2ca86a, #87e6ac); transition: width 1.1s cubic-bezier(.2,.8,.2,1); }
     .services-grid { display: grid; grid-template-columns: repeat(4, 1fr); border-top: 1px solid var(--line); border-left: 1px solid var(--line); }
@@ -205,6 +208,8 @@
     .fact:hover { border-color: var(--green); background: rgba(119,224,164,.1); color: var(--green); transform: translateY(-2px); box-shadow: 0 6px 18px rgba(119,224,164,.14); }
     a.fact { cursor: pointer; }
     .skill-chip:hover { transform: translateY(-2px); border-color: var(--green); background: rgba(119,224,164,.1); }
+    .tag, .vuln-list li { transition: border-color .2s, color .2s, background .2s, transform .2s, box-shadow .2s; cursor: default; }
+    .tag:hover, .vuln-list li:hover { border-color: var(--green); background: rgba(119,224,164,.1); color: var(--green); transform: translateY(-2px); box-shadow: 0 6px 18px rgba(119,224,164,.14); }
     .skill-chip i { display: grid; place-items: center; width: 34px; height: 34px; border-radius: 8px; background: rgba(119,224,164,.12); border: 1px solid rgba(119,224,164,.28); color: var(--green); flex: none; }
     .skill-chip svg { width: 19px; height: 19px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
 
@@ -220,6 +225,11 @@
     .skill-head h3 { margin: 0; font-size: 1.15rem; letter-spacing: -.03em; color: #eef6f0; }
     .skill-head small { display: block; margin-top: 5px; color: #7e9788; font: 400 .68rem var(--mono); }
     .skill-items { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .skills-grid { grid-template-columns: repeat(6, 1fr); }
+    .skill-group { grid-column: span 2; }
+    .skill-group:nth-child(n+4) { grid-column: span 3; }
+    .skill-group:nth-child(n+4) .skill-items { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+
     .skill-items span.skill-chip { display: flex; min-width: 0; font-size: .74rem; line-height: 1.25; }
     .shop-intro { max-width: 580px; margin-top: -25px; margin-bottom: 34px; color: var(--muted); line-height: 1.8; }
     .shop-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
@@ -339,6 +349,8 @@
       .about-aside { position: static; }
       .about-aside h2 { max-width: 520px; }
       .skills-grid { grid-template-columns: 1fr; }
+      .skill-group, .skill-group:nth-child(n+4) { grid-column: auto; }
+      .skill-group:nth-child(n+4) .skill-items { grid-template-columns: 1fr 1fr; }
       .shop-grid, .blog-grid { grid-template-columns: 1fr 1fr; }
       .footer-grid { grid-template-columns: 1fr 1fr; }
       .contact-panel { grid-template-columns: 1fr; gap: 27px; }
@@ -530,7 +542,7 @@
         </div>
         <div class="about-copy">
           <p>I’m a BSc Computer Science student majoring in Cybersecurity at Asia Pacific University. I design enterprise networks in Cisco Packet Tracer, run Linux servers with BIND9, Apache and Fail2ban, and investigate compromised systems with Autopsy and Volatility.</p>
-          <p>I also build web pages and Python tools, and I help other students with their labs.</p>
+          <p>I also design MySQL databases, build web pages and Python tools, and help other students with their labs.</p>
           <div class="fact-list" aria-label="About Tanmay">
             <span class="fact">BSc · Cybersecurity</span><span class="fact">Graduating Jul 2028</span>
            <span class="fact">Internship from May 2027</span><span class="fact">Malaysia</span>
@@ -589,7 +601,8 @@
             <p>I learn fastest under pressure, so I regularly join live CTF events and hands-on platforms where I solve real challenges across web, crypto, forensics and networking, often as part of a team.</p>
             <ul class="ach-list">
               <li><span><a href="https://tryhackme.com/p/tanmay1802" target="_blank" rel="noopener noreferrer">TryHackMe profile</a></span><span>Top 15% globally</span></li>
-              <li><span>Jr Penetration Tester learning path</span><span>TryHackMe · currently enrolled</span></li>
+              <li><span>LetsDefend SIEM practice</span><span>SOC analyst · alert investigation labs</span></li>
+<li><span>Jr Penetration Tester learning path</span><span>TryHackMe · currently enrolled</span></li>
               <li><span>K17 CTF 2026</span><span>Live competition · web, crypto and forensics challenges</span></li>
               <li><span>TFC CTF 2026</span><span>Team Honeypod · collaborative problem solving</span></li>
               <li><span>Additional CTF events in 2026</span><span>3 to 4 more live competitions joined</span></li>
@@ -615,6 +628,7 @@
               <li><span>Red Hat System Administration I &amp; II (RH124, RH134)</span><span>Red Hat · Linux system administration</span></li>
               <li><span>Getting Started with Linux Fundamentals (RH104)</span><span>Red Hat · Linux foundations</span></li>
               <li><span>CCNA: Switching, Routing, and Wireless Essentials (SRWE)</span><span>Cisco Networking Academy · all 16 modules completed</span></li>
+              <li><span>Database module: ERD design, normalization to 3NF and MySQL (DDL and 15 DML queries)</span><span>APU · Semester 1 coursework</span></li>
               <li><span>Networking Academy Learn-A-Thon 2025</span><span>Cisco Networking Academy · routing and switching</span></li>
             </ul>
           </article>
@@ -778,9 +792,10 @@
       const BACKEND_ON = Boolean(SUPABASE_URL && SUPABASE_KEY);
       const projectImages = {"ctf": "img/inline-02.webp", "scanner": "img/inline-03.webp", "study": "img/inline-04.webp", "cctv": "img/inline-05.webp", "exam": "img/inline-06.webp", "book": "img/inline-07.webp", "codecamp": "img/inline-08.webp", "cinema": "img/inline-09.webp", "hospital": "img/inline-10.webp", "shape": "img/inline-11.webp", "bash": "img/inline-12.webp", "packet-tracer": "img/inline-13.webp", "forensics": "img/inline-14.webp", "classifier": "img/inline-15.webp", "burp": "img/inline-19.webp"};
       const projects = [
-        { title: "Enterprise Network Design", category: "network", kind: "packet-tracer", type: "NETWORKS", description: "Multi-branch Cisco Packet Tracer network: static routing to HSRP, EtherChannel, OSPF, DHCP relay, IPv6 and Layer 2 security.", tags: ["Cisco", "OSPF", "VLAN", "IPv6"], slug: "Enterprise-Network-Design" },
-        { title: "Cisco Packet Tracer Labs", category: "network", kind: "pt-labs", type: "NETWORKS", description: "Ten hands-on Packet Tracer labs: SSH, VLANs, trunking, DHCP, OSPF, port security, HSRP and WLC, plus a GRE VPN with ACL troubleshooting notes.", tags: ["Cisco", "HSRP", "GRE", "EtherChannel"], slug: "Cisco-Packet-Tracer-Labs" },
-        { title: "Linux Enterprise Infrastructure", category: "network", kind: "bash", type: "SYSTEMS", description: "Simulated corporate environment with BIND9, Postfix, Dovecot, Apache, Fail2ban, VPN and a honeypot, secured with SSL/TLS.", tags: ["BIND9", "Apache", "Fail2ban", "VPN"], slug: "Linux-Enterprise-Infrastructure" },
+        { title: "Enterprise Network Design", category: "network", kind: "packet-tracer", type: "NETWORKS", description: "Four-site corporate network in Cisco Packet Tracer: HSRP, EtherChannel, OSPF, DHCP relay, IPv6, WLC with WPA2, Layer 2 security and dual-ISP NAT, designed, configured and verified by me, with about 290 screenshots as evidence.", tags: ["Cisco", "OSPF", "HSRP", "EtherChannel", "DHCP Relay", "IPv6", "WLC", "NAT", "L2 Security"], slug: "Enterprise-Network-Design" },
+        { title: "AI-Assisted SOC Pipeline", category: "network", kind: "soc", type: "SOC & DETECTION", description: "A custom SOC pipeline on my Rocky Linux lab. A Kali VM simulates SSH brute-force attacks against my own servers, and Python scripts parse Cowrie honeypot and Fail2ban logs with a rule-based detector. I also documented my unfinished Wazuh attempt and why it failed. Next: Ollama triage and a Streamlit dashboard.", tags: ["Python", "Cowrie", "Fail2ban", "Rocky Linux", "Kali"], slug: "SOC-Home-Lab-Wazuh" },
+        { title: "Cisco Packet Tracer Labs", category: "network", kind: "pt-labs", type: "NETWORKS", description: "Ten hands-on Packet Tracer labs: SSH, VLANs, trunking, DHCP, OSPF, port security, HSRP and WLC, plus a GRE VPN with ACL troubleshooting notes.", tags: ["Cisco", "SSH", "VLANs", "DHCP", "OSPF", "Port Security", "HSRP", "WLC", "EtherChannel", "GRE", "ACLs"], slug: "Cisco-Packet-Tracer-Labs" },
+        { title: "Linux Enterprise Infrastructure", category: "network", kind: "bash", type: "SYSTEMS", description: "Simulated corporate environment with BIND9, Postfix, Dovecot, Apache, Fail2ban, VPN and a honeypot, secured with SSL/TLS. Built and configured by me.", tags: ["BIND9", "Apache", "Fail2ban", "VPN"], slug: "Linux-Enterprise-Infrastructure" },
         { title: "Forensic Investigation Writeup", category: "network", kind: "forensics", type: "FORENSICS", description: "Finding malware on a compromised Windows 10 system using disk analysis, VirusTotal and RAM analysis.", tags: ["Autopsy", "Volatility", "VirusTotal"], slug: "Forensic-Investigation-Writeup" },
         { title: "AI Customer Feedback Classifier", category: "software", kind: "classifier", type: "AI & SOFTWARE", description: "Sentiment classifier with a FastAPI backend, an Ollama reply agent and a Streamlit interface.", tags: ["Python", "FastAPI", "scikit-learn", "Streamlit"], slug: "Customer-Feedback-Classifier" },
         { title: "Study Hack AI Assistant", category: "software", kind: "study", type: "AI & SOFTWARE", description: "AI-powered study assistant as a web app and Android application, with learning resources, productivity tools and AI-based support.", tags: ["TypeScript", "AI", "Web", "Android"], slug: "Study-Hack-AI-Assistant" },
@@ -795,9 +810,11 @@
         { title: "CTF Writeups", category: "network", kind: "ctf", type: "CTF &amp; SECURITY", description: "Step-by-step writeups of 12 solved CTF challenges in Crypto, Web and Forensics, each with screenshots.", tags: ["Crypto", "Web", "Forensics", "Writeups"], slug: "CTF-Writeups", wide: true },{ title: "PortSwigger Web Security Academy Writeups", category: "network", kind: "burp", type: "SECURITY &amp; WRITEUPS", description: "6 solved PortSwigger Web Security Academy labs documented step by step with Burp Suite: Path Traversal (1 lab) and Access Control (5 labs).", tags: ["Burp Suite", "Access Control", "Web Security"], slug: "PortSwigger-Academy-Writeups", wide: true }
       ];
       const skillGroups = [
-        ["Networking", ["Cisco Packet Tracer", "OSPF", "VLAN", "Subnetting", "HSRP", "EtherChannel", "ACLs", "Wireshark"]],
-        ["Systems & Security", ["Linux Administration", "BIND9", "Apache", "Fail2ban", "Wazuh SIEM", "Autopsy", "Volatility", "Burp Suite", "OWASP Top 10", "Malware Analysis", "Reverse Engineering"]],
-        ["Development", ["Python", "Bash", "FastAPI", "Git", "Tailwind CSS"]]
+        ["Networking", ["Cisco Packet Tracer", "OSPF", "VLAN & Trunking", "VLSM", "HSRP", "EtherChannel", "NAT", "DHCP & Relay", "IPv6", "ACLs", "GRE VPN", "WLC & WPA2", "Dual ISP Failover"]],
+        ["Layer 2 Security", ["Port Security", "DHCP Snooping", "Dynamic ARP Inspection", "VLAN Hopping Defence", "SSH v2", "Trunk Hardening", "RADIUS & Syslog"]],
+        ["Linux & Systems", ["Linux Administration", "BIND9", "Apache", "Postfix", "Dovecot", "Fail2ban", "WireGuard VPN", "Honeypot", "UFW & iptables", "TLS"]],
+        ["Security Tools & Analysis", ["Wireshark", "SIEM Practice (LetsDefend)", "Autopsy", "Volatility", "Burp Suite", "OWASP Top 10", "Malware Analysis", "Reverse Engineering"]],
+        ["Development & Databases", ["Python", "Bash", "MySQL", "Database Design", "Normalization (3NF)", "FastAPI", "Git", "Tailwind CSS"]]
       ];
       const products = [
         { index: "GUIDE / 01", title: "Linux & Enterprise Configuration Guide", description: "PDF cheat sheet: BIND9, Apache, Fail2ban and hardening basics.", price: "$9.99", image: "img/inline-16.webp", url: "https://tanmayster357.gumroad.com/l/linux-server-guide" },
@@ -842,16 +859,28 @@
         { kind: "Guide", graphic: "APACHE + SSL", title: "Apache Virtual Hosts with a Self-Signed SSL Certificate and HTTP Redirect", summary: "Two websites on one Apache server, HTTPS with a self-signed certificate, and why Firefox still said Not Secure after curl said it was fine.", image: "img/art-linux-users-groups-sudo.webp", wide: true, href: "blog/apache-virtual-hosts-self-signed-ssl.html", cta: "Read article" },
         { kind: "Guide", graphic: "NAT + FLOATING ROUTE", title: "NAT Overload and a Floating Default Route for Backup Internet in Packet Tracer", summary: "Primary and backup internet exits with PAT and a floating static route, built and tested in Packet Tracer, plus the mistakes I made.", image: "img/art-ospf-single-area-packet-tracer.webp", wide: true, href: "blog/cisco-nat-floating-default-route.html", cta: "Read article" }
       ];
+      // Networking and security projects come first; the rest keep their original order.
+      const projectOrder = ["Enterprise Network Design", "Cisco Packet Tracer Labs", "AI-Assisted SOC Pipeline", "Linux Enterprise Infrastructure", "PortSwigger Web Security Academy Writeups", "CTF Writeups", "Forensic Investigation Writeup", "AI Customer Feedback Classifier", "Python Port Scanner"];
+      const orderRank = project => { const r = projectOrder.indexOf(project.title); return r === -1 ? projectOrder.length : r; };
+      projects.sort((a, b) => orderRank(a) - orderRank(b));
       // Add REAL feedback here (with the person's permission). Newest first;
       // only the first 4 are shown, so a new review pushes the oldest out.
       // { quote: "Their exact words.", name: "Full name", role: "APU student", rating: 5 }
       const reviews = [];
       const iconArrow = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg>';
+      // The bars show where most of my lab time goes. The text beside each bar names the work behind it.
+      const progressProof = {
+        "Networking": "Routing (OSPF, RIP, static) · VLANs and trunking · HSRP · EtherChannel · NAT · IPv6 · ACLs · GRE VPN · WLC and WPA2 · Layer 2 security",
+        "Linux Administration": "BIND9 · Apache · Postfix · Dovecot · Fail2ban · WireGuard VPN · Cowrie honeypot · TLS · UFW and iptables · SSH hardening",
+        "Python": "Port scanner · sockets (TCP/UDP) · FastAPI · scikit-learn · Streamlit · OpenCV · automation scripts",
+        "Digital Forensics": "Autopsy disk analysis · Volatility RAM analysis · VirusTotal · malware investigation on a Windows 10 system",
+        "Web Development": "HTML · CSS · JavaScript · Tailwind CSS · TypeScript web app · Cloudflare Pages hosting · Burp Suite web testing"
+      };
       const progressHost = document.getElementById("progress-list");
       progressHost.innerHTML = progress.map(([name, value]) => `
         <div class="progress-item">
-          <div class="progress-head"><span>${name}</span><span>${value}%</span></div>
-          <div class="progress-rail" role="progressbar" aria-label="${name}" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${value}">
+          <div class="progress-head"><span>${name}</span><span>${progressProof[name] || ""}</span></div>
+          <div class="progress-rail" aria-hidden="true">
             <div class="progress-fill" data-progress="${value}%"></div>
           </div>
         </div>`).join("");
@@ -871,6 +900,7 @@
       const terminalMarkup = (kind) => {
         const rows = {
           "packet-tracer": '<span class="term-muted">topology / campus-core</span><br><span class="term-accent">CORE</span> ─── OSPF area 0<br>├─ SW1 · VLAN 10 / 20<br>├─ SW2 · EtherChannel<br>└─ R1 · IPv6 enabled',
+          "soc": '<span class="term-muted">soc-pipeline / detector</span><br>kali &rarr; ssh brute force<br>cowrie + fail2ban logs parsed<br><span class="term-accent">brute force detected ✓</span>',
           "pt-labs": '<span class="term-muted">cisco-labs / index</span><br>01 ssh · 02 vlan · 03 trunk<br>04 dhcp · 05 ospf · 06 port-sec<br>07 l3 · 08 hsrp · 09 wlc<br><span class="term-accent">10 gre + hsrp + acl ✓</span>',
           bash: '<span class="term-accent">$</span> named-checkconf<br><span class="term-muted">zone corp.local loaded OK</span><br><span class="term-accent">$</span> systemctl status fail2ban<br><span class="term-accent">● active (running)</span><br><span class="term-muted">$ _</span>',
           forensics: '<span class="term-muted">disk image / evidence-01</span><br>0x1000&nbsp;&nbsp; 4D 5A 90 00 03 00<br>0x1010&nbsp;&nbsp; 00 00 04 00 00 00<br><span class="term-accent">indicator detected</span><br>Autopsy · Volatility',
@@ -947,17 +977,44 @@
         "HSRP": '<path d="M4 8h13l-3-3M20 16H7l3 3"/>',
         "EtherChannel": '<path d="M4 8h16M4 12h16M4 16h16"/>',
         "ACLs": '<path d="M5 4h14v16H5zM9 9h6M9 13h6M9 17h3"/>',
-        "Wazuh SIEM": '<path d="M3 20V10M9 20V4M15 20v-7M21 20V8"/>',
+        "SIEM Practice (LetsDefend)": '<path d="M3 20V10M9 20V4M15 20v-7M21 20V8"/>',
         "Burp Suite": '<circle cx="12" cy="12" r="7"/><path d="M12 2v5M12 17v5M2 12h5M17 12h5"/>',
         "Volatility": '<rect x="3" y="7" width="18" height="10" rx="2"/><path d="M7 7v10M11 7v10M15 7v10"/>',
         "OWASP Top 10": '<path d="M12 3l9 16H3z"/><path d="M12 10v4M12 17v.01"/>',
         "Bash": '<path d="M4 17l5-5-5-5M12 19h8"/>',
-        "Tailwind CSS": '<path d="M3 9h11a3 3 0 1 0-3-3M3 15h15a3 3 0 1 1-3 3M3 12h8"/>'
+        "Tailwind CSS": '<path d="M3 9h11a3 3 0 1 0-3-3M3 15h15a3 3 0 1 1-3 3M3 12h8"/>',
+        "NAT": '<path d="M4 8h13l-3-3M20 16H7l3 3"/>',
+        "DHCP": '<rect x="4" y="5" width="16" height="6" rx="1.5"/><path d="M12 11v4M7 19h10M12 15v4"/>',
+        "IPv6": '<path d="M4 7h16M4 12h16M4 17h10"/>',
+        "GRE VPN": '<path d="M3 12h4M17 12h4"/><rect x="7" y="8" width="10" height="8" rx="4"/>',
+        "Port Security": '<rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>',
+        "DHCP Snooping": '<circle cx="11" cy="11" r="6"/><path d="M20 20l-4.5-4.5M9 11h4"/>',
+        "Dynamic ARP Inspection": '<path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M9 12h6M12 9v6"/>',
+        "VLAN Hopping Defence": '<path d="M12 3 3 8l9 5 9-5zM3 12.5l9 5 9-5"/><path d="M12 17v5"/>',
+        "Postfix": '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/>',
+        "Dovecot": '<path d="M4 6h16v10H4zM4 16l4 4v-4"/>',
+        "WireGuard VPN": '<path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M8 12h8"/>',
+        "Honeypot": '<path d="M6 10h12l-1 9H7zM8 10a4 4 0 0 1 8 0"/>',
+        "UFW & iptables": '<path d="M4 4h16v6H4zM4 14h16v6H4zM8 10v4M16 10v4"/>',
+        "TLS": '<rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3M12 15v2"/>',
+        "MySQL": '<ellipse cx="12" cy="6" rx="8" ry="3"/><path d="M4 6v6c0 1.7 3.6 3 8 3s8-1.3 8-3V6M4 12v6c0 1.7 3.6 3 8 3s8-1.3 8-3v-6"/>',
+        "Database Design": '<rect x="3" y="4" width="7" height="6" rx="1"/><rect x="14" y="4" width="7" height="6" rx="1"/><rect x="8.5" y="15" width="7" height="5" rx="1"/><path d="M6.5 10v2.5h11V10M12 12.5V15"/>',
+        "Normalization (3NF)": '<path d="M4 6h16M4 12h10M4 18h6"/>',
+        "VLAN & Trunking": '<path d="M12 3 3 8l9 5 9-5zM3 12.5l9 5 9-5M3 17l9 5 9-5"/>',
+        "VLSM": '<rect x="4" y="4" width="7" height="7" rx="1"/><rect x="13" y="4" width="7" height="7" rx="1"/><rect x="4" y="13" width="7" height="7" rx="1"/>',
+        "DHCP & Relay": '<rect x="4" y="5" width="16" height="6" rx="1.5"/><path d="M12 11v4M7 19h10M12 15v4"/>',
+        "WLC & WPA2": '<path d="M5 12a10 10 0 0 1 14 0M8 15a6 6 0 0 1 8 0M12 19h.01"/>',
+        "Dual ISP Failover": '<path d="M4 8h13l-3-3M20 16H7l3 3"/>',
+        "SSH v2": '<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 9l3 3-3 3M12 15h5"/>',
+        "Trunk Hardening": '<path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M8 12h8"/>',
+        "RADIUS & Syslog": '<path d="M5 4h14v16H5zM9 9h6M9 13h6M9 17h3"/>'
       };
       const skillMeta = [
-        ["Core of my lab work", '<circle cx="12" cy="5" r="2.5"/><circle cx="5" cy="19" r="2.5"/><circle cx="19" cy="19" r="2.5"/><path d="M12 7.5v4M12 11.5 6.5 17M12 11.5l5.5 5.5"/>'],
-        ["Defence and analysis", '<path d="M12 3 4.5 6v5.5c0 4.5 3.2 8 7.5 9.5 4.3-1.5 7.5-5 7.5-9.5V6z"/><path d="m9 12 2.2 2.2L15.5 10"/>'],
-        ["Tools and automation", '<path d="m8 8-4 4 4 4M16 8l4 4-4 4M13.5 5l-3 14"/>']
+        ["Routing, switching and services", '<circle cx="12" cy="5" r="2.5"/><circle cx="5" cy="19" r="2.5"/><circle cx="19" cy="19" r="2.5"/><path d="M12 7.5v4M12 11.5 6.5 17M12 11.5l5.5 5.5"/>'],
+        ["Protecting the switched LAN", '<rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3M12 15v2"/>'],
+        ["Servers, services and hardening", '<rect x="3" y="4" width="18" height="6" rx="1.5"/><rect x="3" y="14" width="18" height="6" rx="1.5"/><path d="M7 7h.01M7 17h.01"/>'],
+        ["Detection, analysis and testing", '<path d="M12 3 4.5 6v5.5c0 4.5 3.2 8 7.5 9.5 4.3-1.5 7.5-5 7.5-9.5V6z"/><path d="m9 12 2.2 2.2L15.5 10"/>'],
+        ["Code, automation and data", '<path d="m8 8-4 4 4 4M16 8l4 4-4 4M13.5 5l-3 14"/>']
       ];
       const skillChip = item => `<span class="skill-chip"><i><svg viewBox="0 0 24 24" aria-hidden="true">${skillIcons[item] || '<circle cx="12" cy="12" r="4"/>'}</svg></i>${item}</span>`;
       document.getElementById("skills-grid").innerHTML = skillGroups.map(([heading, items], index) => `
