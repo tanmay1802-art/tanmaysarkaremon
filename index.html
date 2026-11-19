@@ -164,6 +164,11 @@
     .project-card.is-wide .project-art.has-image { aspect-ratio: 16 / 9; }
     .project-card.is-wide .project-body { align-self: center; }
     @media (max-width: 900px) { .project-card.is-wide { display: block; } }
+    .project-card.is-lone { grid-column: 1 / -1; }
+    .project-card.is-lone.has-art { grid-template-columns: 320px minmax(0, 1fr); min-height: 280px; }
+    .project-card.is-lone .project-body { align-self: center; max-width: 640px; }
+    @media (max-width: 1100px) { .project-card.is-lone.has-art { grid-template-columns: 250px 1fr; } }
+    @media (max-width: 540px) { .project-card.is-lone.has-art { display: block; } }
     .project-card { transition: border-color .2s, transform .2s, box-shadow .2s; }
     .project-card:hover { transform: translateY(-4px); border-color: rgba(119,224,164,.5); box-shadow: 0 18px 40px -22px rgba(53,189,120,.45); }
     .project-card:hover .project-art.has-image img { transform: scale(1.03); }
@@ -193,6 +198,12 @@
 
     .skill-items { gap: 10px; }
     .skill-items span.skill-chip { display: inline-flex; align-items: center; gap: 10px; padding: 7px 14px 7px 7px; border-radius: 10px; background: linear-gradient(180deg, rgba(119,224,164,.06), rgba(119,224,164,.015)); transition: transform .2s, border-color .2s, background .2s; font-weight: 600; }
+    /* ---- Hover highlight for filters and info chips ---- */
+    .filter-button:hover { border-color: var(--green); background: rgba(119,224,164,.1); color: var(--green); transform: translateY(-2px); box-shadow: 0 6px 18px rgba(119,224,164,.14); }
+    .filter-button:focus-visible { outline: 2px solid var(--green); outline-offset: 2px; }
+    .fact { transition: border-color .2s, color .2s, background .2s, transform .2s, box-shadow .2s; cursor: default; }
+    .fact:hover { border-color: var(--green); background: rgba(119,224,164,.1); color: var(--green); transform: translateY(-2px); box-shadow: 0 6px 18px rgba(119,224,164,.14); }
+    a.fact { cursor: pointer; }
     .skill-chip:hover { transform: translateY(-2px); border-color: var(--green); background: rgba(119,224,164,.1); }
     .skill-chip i { display: grid; place-items: center; width: 34px; height: 34px; border-radius: 8px; background: rgba(119,224,164,.12); border: 1px solid rgba(119,224,164,.28); color: var(--green); flex: none; }
     .skill-chip svg { width: 19px; height: 19px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
@@ -376,6 +387,19 @@
     .vuln-list { display: flex; flex-wrap: wrap; gap: 10px; margin: 0 0 20px; padding: 0; list-style: none; }
     .vuln-list li { padding: 8px 12px; border: 1px solid rgba(119,224,164,.3); border-radius: 8px; background: rgba(119,224,164,.07); color: #d3dfd7; font: 500 .72rem var(--mono); }
     .vuln-list li::before { content: "\2713"; margin-right: 8px; color: var(--green); }
+
+    /* ---- Achievements polish ---- */
+    .stat-grid { gap: 14px; border: 0; background: none; }
+    .stat { position: relative; border: 1px solid var(--line); border-radius: 16px; background: linear-gradient(180deg, rgba(119,224,164,.07), rgba(119,224,164,0) 70%), var(--surface); overflow: hidden; transition: border-color .25s, transform .25s; }
+    .stat::before { content: ""; position: absolute; inset: 0 0 auto 0; height: 3px; background: linear-gradient(90deg, var(--green), transparent); }
+    .stat:hover { border-color: rgba(119,224,164,.45); transform: translateY(-3px); }
+    .ach-card { position: relative; border-radius: 16px; background: linear-gradient(180deg, rgba(119,224,164,.05), rgba(119,224,164,0) 40%), var(--surface); overflow: hidden; transition: border-color .25s, transform .25s; }
+    .ach-card::before { content: ""; position: absolute; inset: 0 0 auto 0; height: 3px; background: linear-gradient(90deg, var(--green), transparent); }
+    .ach-card:hover { transform: translateY(-3px); }
+    .ach-card h3 { font-size: 1.25rem; color: #eef6f0; }
+    .ach-card > p { font-size: .86rem; }
+    .ach-list li { font-size: .92rem; }
+    .vuln-list li { padding: 9px 14px; font-size: .76rem; }
     @media (max-width: 780px) {
       .stat-grid { grid-template-columns: 1fr 1fr; }
       .stat:nth-child(2) { border-right: 0; }
@@ -575,11 +599,11 @@
           <article class="ach-card">
             <span class="eyebrow">WEB SECURITY</span>
             <h3>PortSwigger Web Security Academy</h3>
-            <p>I work through the PortSwigger labs hands-on with Burp Suite, and I write up every solved lab step by step, covering how the flaw works, how I found it and how it should be fixed.</p>
+            <p>I work through the PortSwigger labs hands-on with Burp Suite, and I write up every solved lab step by step, covering how the flaw works, how I found it and how it should be fixed. 6 labs are documented so far, and I am now working on Authentication.</p>
             <!-- To add another vulnerability, copy one <li> line below and change the text. Only list what you have really solved. -->
             <ul class="vuln-list">
-              <li>Path Traversal</li>
-              <li>Access Control</li>
+              <li>Path Traversal · 1 lab</li>
+              <li>Access Control · 5 labs</li>
             </ul>
             <a class="text-link" href="https://github.com/tanmay1802-art/PortSwigger-Academy-Writeups" target="_blank" rel="noopener noreferrer">Read the writeups on GitHub <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></a>
           </article>
@@ -590,6 +614,7 @@
             <ul class="ach-list">
               <li><span>Red Hat System Administration I &amp; II (RH124, RH134)</span><span>Red Hat · Linux system administration</span></li>
               <li><span>Getting Started with Linux Fundamentals (RH104)</span><span>Red Hat · Linux foundations</span></li>
+              <li><span>CCNA: Switching, Routing, and Wireless Essentials (SRWE)</span><span>Cisco Networking Academy · all 16 modules completed</span></li>
               <li><span>Networking Academy Learn-A-Thon 2025</span><span>Cisco Networking Academy · routing and switching</span></li>
             </ul>
           </article>
@@ -767,7 +792,7 @@
         { title: "Exam Grading System", category: "software", kind: "exam", type: "SOFTWARE", description: "Python application that takes marks for different subjects and calculates and displays student grades.", tags: ["Python"], slug: "Exam-Grading-system" },
         { title: "Shape Management System", category: "software", kind: "shape", type: "SOFTWARE", description: "Assembly and C# generator for Circle, Square, Triangle, Rectangle and Diamond patterns.", tags: ["Assembly", "C#"], slug: "-Shape-Management-System" },
         { title: "Python Port Scanner", category: "software", kind: "scanner", type: "SECURITY &amp; SOFTWARE", description: "Basic Python port scanner with socket and client-server fundamentals, built to learn networking and cybersecurity.", tags: ["Python", "Sockets", "TCP/UDP"], slug: "Portscanner", wide: true },
-        { title: "CTF Writeups", category: "network", kind: "ctf", type: "CTF &amp; SECURITY", description: "Step-by-step writeups of 12 solved CTF challenges in Crypto, Web and Forensics, each with screenshots.", tags: ["Crypto", "Web", "Forensics", "Writeups"], slug: "CTF-Writeups", wide: true },{ title: "PortSwigger Web Security Academy Writeups", category: "network", kind: "burp", type: "SECURITY &amp; WRITEUPS", description: "Documented walkthroughs of solved PortSwigger Web Security Academy labs, including Path Traversal and Access Control, using Burp Suite.", tags: ["Burp Suite", "Access Control", "Web Security"], slug: "PortSwigger-Academy-Writeups", wide: true }
+        { title: "CTF Writeups", category: "network", kind: "ctf", type: "CTF &amp; SECURITY", description: "Step-by-step writeups of 12 solved CTF challenges in Crypto, Web and Forensics, each with screenshots.", tags: ["Crypto", "Web", "Forensics", "Writeups"], slug: "CTF-Writeups", wide: true },{ title: "PortSwigger Web Security Academy Writeups", category: "network", kind: "burp", type: "SECURITY &amp; WRITEUPS", description: "6 solved PortSwigger Web Security Academy labs documented step by step with Burp Suite: Path Traversal (1 lab) and Access Control (5 labs).", tags: ["Burp Suite", "Access Control", "Web Security"], slug: "PortSwigger-Academy-Writeups", wide: true }
       ];
       const skillGroups = [
         ["Networking", ["Cisco Packet Tracer", "OSPF", "VLAN", "Subnetting", "HSRP", "EtherChannel", "ACLs", "Wireshark"]],
@@ -885,6 +910,12 @@
               <a class="text-link" href="${GITHUB}/${project.slug}" target="_blank" rel="noopener noreferrer">View on GitHub ${iconArrow}</a>
             </div>
           </article>`).join("");
+        // A card left alone in a half-width row would leave a gap, so stretch it across the row.
+        const cards = [...projectHost.children];
+        let run = [];
+        const closeRun = () => { if (run.length % 2 === 1) run[run.length - 1].classList.add("is-lone"); run = []; };
+        cards.forEach(card => card.classList.contains("is-wide") ? closeRun() : run.push(card));
+        closeRun();
       }
       filtersHost.addEventListener("click", event => {
         const button = event.target.closest("button[data-filter]");
